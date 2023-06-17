@@ -241,7 +241,7 @@ import torch
 import random
 from tqdm import tqdm
 def transformer_metric(x, y, test_x, test_y, cat_features, metric_used, max_time=300, device='cpu', N_ensemble_configurations=3, classifier=None):
-    from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
+    from scripts.transformer_prediction_interface import TabPFNClassifier
 
     if classifier is None:
       classifier = TabPFNClassifier(device=device, N_ensemble_configurations=N_ensemble_configurations)

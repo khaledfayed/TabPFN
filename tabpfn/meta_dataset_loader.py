@@ -1,14 +1,46 @@
 import numpy as np
 from sklearn.datasets import load_breast_cancer, load_iris, fetch_openml
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
+import openml
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+import pandas as pd
 
 from numpy.random import default_rng
 
-def split_datasets(test_percentage=0.2):
-    breast_cancer = load_breast_cancer()
-    iris = load_iris()
+def load_OHE_dataset(dids):
+    encoder = OneHotEncoder()
+    label_encoder = LabelEncoder()
+
+    datasets = openml.datasets.get_datasets(dids)
     
-    datasets = [breast_cancer, iris]
+    encoded_datasets = []
+    
+    for dataset in datasets:
+        X, y, categorical_features, attribute_names = dataset.get_data(
+            target=dataset.default_target_attribute,
+        )
+        
+        df = pd.DataFrame(X, columns=attribute_names)
+        
+        categorical_columns = [col for col, is_categorical in zip(attribute_names, categorical_features) if is_categorical]
+        
+        preprocessor = ColumnTransformer(
+            transformers=[('cat', encoder, categorical_columns)],
+            remainder='passthrough'
+        )
+        
+        pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
+        
+        transformed_data = pipeline.fit_transform(df)
+        transformed_targets = label_encoder.fit_transform(y)
+            
+        encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id})
+    
+    return encoded_datasets
+
+def split_datasets(datasets, test_percentage=0.2):
     
     train_datasets = [{'data': dataset['data'][:int((1-test_percentage)*len(dataset['data']))], 'target': dataset['target'][:int((1-test_percentage)*len(dataset['target']))] }for dataset in datasets]
     test_datasets = [{'data': dataset['data'][int((1-test_percentage)*len(dataset['data'])):], 'target': dataset['target'][int((1-test_percentage)*len(dataset['target'])):] }for dataset in datasets]
@@ -42,35 +74,88 @@ def load_meta_data_loader( datasets, batch_size=16, shuffle=True, num_workers=0)
     
     rng.shuffle(meta_dataset, axis=0)
     
-    return meta_dataset
-
+    return meta_dataset    
     
-    ################################################################################one dataset##############################################
-            
-    # for dataset_name in dataset_names:
-    #     data = fetch_openml(name=dataset_name, as_frame=False)
-    #     features = data['data']
-    #     labels = data['target']
-    #     print(labels)
-    #     dataset = TensorDataset(features, labels)
-    #     datasets.append(dataset)
+    
+def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, shuffle=True):
+    # datasets = load_OHE_dataset([31])
+    # datasets = [{'data': np.array([[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20],[29,220]]), 'target': np.array([0,1,1,1,0,0,1,1,0,0,1])}]
+    
+    rng = default_rng()
+    
+    meta_dataset = []
+    
+    for dataset in datasets:
         
-    # meta_dataset = MetaDataset(datasets)
-    
-    # num_datasets = len(datasets)
+        targets = np.unique(dataset['target'])
+        num_classes = len(targets)
+        
+        target_indices = [np.where(dataset['target'] == target)[0] for target in targets]
+        
+        if shuffle:
+            for i in range(num_classes):
+                rng.shuffle(target_indices[i]) 
+        
+        target_lengths = [len(target) for target in target_indices]       
+        max_target_length = max(target_lengths)
+        target_indices = [np.append(np.tile(target,(max_target_length//target_lengths[i],1)), target[:max_target_length%target_lengths[i]]) for i, target in enumerate(target_indices)]
+            
+        shuffled_target_indices = target_indices
+        
+        batch_size = num_classes * num_samples_per_class
+        
+        dataset_length = 0 
+        
+        for i in range(len(shuffled_target_indices)): dataset_length += len(shuffled_target_indices[i])
+        
+        number_of_batches =  1 if one_batch else dataset_length // batch_size
+                
+        # batched_dataset = []
+        
+        for i in range(number_of_batches):
+            
+            data_query = []
+            data_support = []
+            target_query = []
+            target_support = []
+        
+            for j in range(len(shuffled_target_indices)):
+                
+                batch_indices = shuffled_target_indices[j][i*num_samples_per_class:(i+1)*num_samples_per_class]
+                
+                x = dataset['data'][batch_indices[:num_samples_per_class//2][0]]
+                                
+                data_query.append(dataset['data'][batch_indices[:num_samples_per_class//2]][0])
+                data_support.append(dataset['data'][batch_indices[num_samples_per_class//2:]][0])
+                target_query.append(dataset['target'][batch_indices[:num_samples_per_class//2]][0])
+                target_support.append(dataset['target'][batch_indices[num_samples_per_class//2:]][0])
+                            
+            permutation_query = np.random.permutation(len(data_query))
+            permutation_support = np.random.permutation(len(data_support))
+            
+            data_query = np.array(data_query)
+            data_support = np.array(data_support)
+            target_query = np.array(target_query)
+            target_support = np.array(target_support)
+            
+            if shuffle:
+                data_query = data_query[permutation_query]
+                data_support = data_support[permutation_support]
+                target_query = target_query[permutation_query]
+                target_support = target_support[permutation_support]
+            
+            meta_dataset.append({'x': np.append(data_query, data_support, axis=0 ), 'y': np.append(target_query, target_support, axis=0)})
 
-    # meta_data_loader = DataLoader(
-    # dataset=meta_dataset,
-    # batch_size=batch_size,
-    # shuffle=shuffle,
-    # num_workers=num_workers)
+    rng.shuffle(meta_dataset) if shuffle else None
     
-    # return meta_data_loader
-    
+    return meta_dataset
     
 
 def main():
-    split_datasets()
+    datasets = load_OHE_dataset([31])
+    data = meta_dataset_loader(datasets)
+   
+    pass
 
 if __name__ == "__main__":
     main()

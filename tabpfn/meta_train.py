@@ -126,3 +126,9 @@ def run_training():
     # control_classifier.fit(unseen_x_support, unseen_y_support)
     # y_eval, p_eval = control_classifier.predict(unseen_x_query, return_winning_probability=True)
     # print('Prediction time: ', time.time() - start, 'Accuracy', accuracy_score(unseen_y_query, y_eval), '\n')
+    
+def main():
+    run_training()
+
+if __name__ == "__main__":
+    main()

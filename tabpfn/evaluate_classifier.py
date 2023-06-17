@@ -1,4 +1,4 @@
-from scripts.transformer_prediction_interface import TabPFNClassifier
+from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
 from meta_dataset_loader import load_meta_data_loader, split_datasets, load_OHE_dataset, meta_dataset_loader
 from sklearn.metrics import accuracy_score
 import time

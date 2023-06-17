@@ -1,5 +1,5 @@
 from meta_dataset_loader import load_meta_data_loader, split_datasets
-from scripts.transformer_prediction_interface import TabPFNClassifier
+from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim

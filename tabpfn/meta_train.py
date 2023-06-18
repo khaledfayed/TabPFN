@@ -9,13 +9,11 @@ import time
 from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 
-def run_training():
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     #hyper parameters:
-    epochs = 2
-    lr = 0.00001
     batch_size = 32
     test_datasets = [22]
 
@@ -40,7 +38,7 @@ def run_training():
     #meta training loop
     for e in range(epochs):
         print('=' * 15, 'Epoch', e,'=' * 15)
-        meta_data_loader = meta_dataset_loader(datasets, num_samples_per_class=16)
+        meta_data_loader = meta_dataset_loader(datasets, num_samples_per_class)
         
         accumulator = 0
         

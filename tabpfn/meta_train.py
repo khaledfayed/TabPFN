@@ -71,16 +71,15 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
         print('Accumulator =',accumulator)  
         
         loss_history.append(accumulator)
+        
 
-    # #plot loss history
-    # plt.plot(loss_history)
-    # plt.savefig('fig.png')
-    # plt.show()
+        #plot loss history
+        plt.plot(loss_history)
+        plt.show()
 
-    # #plot accuracy history
-    # plt.plot(test_accuracy_history)
-    # plt.savefig('fig.png')
-    # plt.show()
+        #plot accuracy history
+        plt.plot(test_accuracy_history)
+        plt.show()
 
     # print('\n')
 

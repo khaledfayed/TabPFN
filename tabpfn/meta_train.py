@@ -62,14 +62,13 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
                 is_equal =torch.equal(a.data, b.data)
                 accumulator += loss.item()
                 
-        #TODO: print accuracy for test dataset
         
         test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
         
         
         accumulator /= len(meta_data_loader)
         print('=' * 15, 'Accumulator', e,'=' * 15)     
-        print('Accumulator =',loss.item())  
+        print('Accumulator =',accumulator)  
         
         loss_history.append(accumulator)
 

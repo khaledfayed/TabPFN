@@ -8,7 +8,7 @@ xgboost==1.4.0
 tqdm==4.62.1
 numpy==1.21.2
 openml==0.12.2
-catboost==0.26.1
+catboost
 # auto-sklearn==0.14.5
 hyperopt==0.2.5
 configspace==0.4.21

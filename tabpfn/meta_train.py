@@ -47,20 +47,19 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
             x_support, x_query = np.split(x,2)
             y_support, y_query = np.split(y,2)
             
-            if (len(np.unique(y_support))>0 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
-                y_query = torch.from_numpy(y_query).to(device)
-                classifier.fit(x_support, y_support)
-                optimizer.zero_grad()
-                prediction = classifier.predict_proba2(x_query)
-                prediction = prediction.squeeze(0)
-                loss = criterion(prediction,y_query)
-                print('epoch',e,'|','loss =',loss.item())
-                a = list(classifier.model[2].parameters())[9]
-                loss.backward()
-                optimizer.step()
-                b = list(classifier.model[2].parameters())[9]
-                is_equal =torch.equal(a.data, b.data)
-                accumulator += loss.item()
+            y_query = torch.from_numpy(y_query).to(device)
+            classifier.fit(x_support, y_support)
+            optimizer.zero_grad()
+            prediction = classifier.predict_proba2(x_query)
+            prediction = prediction.squeeze(0)
+            loss = criterion(prediction,y_query)
+            print('epoch',e,'|','loss =',loss.item())
+            a = list(classifier.model[2].parameters())[9]
+            loss.backward()
+            optimizer.step()
+            b = list(classifier.model[2].parameters())[9]
+            is_equal =torch.equal(a.data, b.data)
+            accumulator += loss.item()
                 
         
         test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))

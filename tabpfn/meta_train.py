@@ -46,14 +46,12 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
             x,y = batch['x'], batch['y']
             x_support, x_query = np.split(x,2)
             y_support, y_query = np.split(y,2)
-            y_query = torch.from_numpy(y_query).to(device)
             
             classifier.fit(x_support, y_support)
             optimizer.zero_grad()
             prediction = classifier.predict_proba2(x_query)
             prediction = prediction.squeeze(0)
-            loss = criterion(prediction,y_query)
-            print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
+            loss = criterion(prediction,torch.from_numpy(y_query).to(device))
             loss.backward()
             optimizer.step()
             accumulator += loss.item()
@@ -62,7 +60,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
             optimizer.zero_grad()
             prediction = classifier.predict_proba2(x_support)
             prediction = prediction.squeeze(0)
-            loss = criterion(prediction,y_support)
+            loss = criterion(prediction,torch.from_numpy(y_support).to(device))
             print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
             loss.backward()
             optimizer.step()

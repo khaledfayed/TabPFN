@@ -54,7 +54,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
                 prediction = classifier.predict_proba2(x_query)
                 prediction = prediction.squeeze(0)
                 loss = criterion(prediction,y_query)
-                print('loss =',loss.item())
+                print('epoch',e,'|','loss =',loss.item())
                 a = list(classifier.model[2].parameters())[9]
                 loss.backward()
                 optimizer.step()

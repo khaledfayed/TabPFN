@@ -34,6 +34,8 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
 
     #print accuracy for test dataset
     test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
+    
+    start_time = time.time()
 
     #meta training loop
     for e in range(epochs):
@@ -79,10 +81,13 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
 
         #plot loss history
         plt.plot(loss_history)
+        plt.savefig('plots/{start_time}/loss_history.png')
         plt.show()
 
         #plot accuracy history
         plt.plot(test_accuracy_history)
+        plt.savefig('plots/{start_time}/accuracy_history.png')
+
         plt.show()
 
     # print('\n')

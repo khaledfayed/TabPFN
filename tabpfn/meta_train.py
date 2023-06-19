@@ -42,7 +42,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
         
         accumulator = 0
         
-        for batch in meta_data_loader:
+        for i, batch in enumerate(meta_data_loader):
             x,y = batch['x'], batch['y']
             x_support, x_query = np.split(x,2)
             y_support, y_query = np.split(y,2)
@@ -53,7 +53,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
             prediction = classifier.predict_proba2(x_query)
             prediction = prediction.squeeze(0)
             loss = criterion(prediction,y_query)
-            print('epoch',e,'|','loss =',loss.item())
+            print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
             a = list(classifier.model[2].parameters())[9]
             loss.backward()
             optimizer.step()

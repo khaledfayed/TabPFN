@@ -9,7 +9,15 @@ import pandas as pd
 
 from numpy.random import default_rng
 
-def load_OHE_dataset(dids):
+def shuffle_dataset_features(transformed_data):
+    _, num_cols = transformed_data.shape
+    augmented_data = transformed_data.copy()
+    shuffled_columns = np.random.permutation(num_cols)
+    augmented_data = augmented_data[:, shuffled_columns]
+    
+    return augmented_data
+
+def load_OHE_dataset(dids, num_augmented_datasets=0):
     encoder = OneHotEncoder()
     label_encoder = LabelEncoder()
 
@@ -37,6 +45,9 @@ def load_OHE_dataset(dids):
         transformed_targets = label_encoder.fit_transform(y)
             
         encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id})
+        
+        for i in range(num_augmented_datasets):
+            encoded_datasets.append({'data': shuffle_dataset_features(transformed_data), 'target': transformed_targets, 'id': f"dataset.id_augmented_{i}"})
     
     return encoded_datasets
 

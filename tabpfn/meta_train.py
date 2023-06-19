@@ -133,7 +133,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
     # print('Prediction time: ', time.time() - start, 'Accuracy', accuracy_score(unseen_y_query, y_eval), '\n')
     
 def main():
-    run_training()
+    run_training(epochs=50)
 
 if __name__ == "__main__":
     main()

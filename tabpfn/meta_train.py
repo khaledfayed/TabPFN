@@ -57,12 +57,22 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
             loss.backward()
             optimizer.step()
             accumulator += loss.item()
+            
+            classifier.fit(x_query, y_query)
+            optimizer.zero_grad()
+            prediction = classifier.predict_proba2(x_support)
+            prediction = prediction.squeeze(0)
+            loss = criterion(prediction,y_support)
+            print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
+            loss.backward()
+            optimizer.step()
+            accumulator += loss.item()
                 
         
         test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
         
         
-        accumulator /= len(meta_data_loader)
+        accumulator /= (len(meta_data_loader)*2)
         print('=' * 15, 'Accumulator', e,'=' * 15)     
         print('Accumulator =',accumulator)  
         

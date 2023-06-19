@@ -9,7 +9,7 @@ import time
 from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 
-def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0):
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -25,7 +25,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16):
 
     dids = [id for id in open_cc_dids if id not in test_datasets]
     print('=' * 15, 'Train Datasets','=' * 15, '\n', dids, '\n')   
-    datasets = load_OHE_dataset(dids)
+    datasets = load_OHE_dataset(dids, num_augmented_datasets)
     # train_dataset= meta_dataset_loader(datasets)
 
     loss_history = []

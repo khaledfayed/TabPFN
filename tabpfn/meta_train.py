@@ -86,6 +86,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
         #plot accuracy history
         plt.plot(test_accuracy_history)
+        plt.axhline(y=test_accuracy_history[0], linestyle='dashed' , color='grey')
         plt.savefig(f"plots/{start_time}_accuracy_history.png")
 
         plt.show()

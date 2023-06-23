@@ -86,6 +86,65 @@ def load_meta_data_loader( datasets, batch_size=16, shuffle=True, num_workers=0)
     rng.shuffle(meta_dataset, axis=0)
     
     return meta_dataset    
+
+def meta_dataset_loader2(datasets, support_batch_size=32, query_batch_size=16 ):
+    # datasets = [{'data': np.array([[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20],[29,220],[29,220]]), 'target': np.array([0,1,1,1,1,0,0,1,1,0,0,1])}]
+
+    rng = default_rng()
+    
+    meta_dataset_support = []
+    meta_dataset_query = []
+
+    support_percentage = support_batch_size / (support_batch_size + query_batch_size)
+
+    for dataset in datasets:
+        dataset_indices = np.arange(len(dataset['data']))
+        rng.shuffle(dataset_indices)
+        
+        support_length = (support_percentage * len(dataset['data']))
+        support_length = int(support_length - support_length % support_batch_size)
+        
+        support_indices = dataset_indices[:support_length]
+        query_indices = dataset_indices[support_length:]
+        
+        support_data = dataset['data'][support_indices]
+        support_targets = dataset['target'][support_indices]
+        
+        
+        batched_support_data = [support_data[i:i+support_batch_size] for i in range(0, len(support_data), support_batch_size)]
+        batched_support_target = [support_targets[i:i+support_batch_size] for i in range(0, len(support_targets), support_batch_size)]
+        
+        batched_dataset = [{'x': data, 'y':target } for data, target in zip(batched_support_data, batched_support_target)]
+        
+        meta_dataset_support += batched_dataset
+
+        
+        for batch in batched_support_target:
+            targets = np.unique(batch)
+            batch_indices = []
+            for i, index in enumerate(query_indices):
+                if dataset['target'][index] in targets:
+                    batch_indices.append(index)
+                    np.delete(query_indices, i)
+                
+                if len(batch_indices) == query_batch_size:
+                    break
+                
+            meta_dataset_query.append({'x': dataset['data'][batch_indices], 'y': dataset['target'][batch_indices]})
+            
+    meta_dataset_support = np.array(meta_dataset_support)
+    meta_dataset_query = np.array(meta_dataset_query)
+    
+    indices = np.random.permutation(len(meta_dataset_support))
+    
+    meta_dataset_support = meta_dataset_support[indices] 
+    meta_dataset_query =  meta_dataset_query[indices]
+ 
+    
+    
+    return meta_dataset_support, meta_dataset_query
+    
+                                            
     
     
 def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, shuffle=True):
@@ -164,7 +223,7 @@ def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, s
 
 def main():
     datasets = load_OHE_dataset([31])
-    data = meta_dataset_loader(datasets)
+    data = meta_dataset_loader2(datasets)
    
     pass
 

@@ -1,5 +1,6 @@
-from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader
+from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader2
 from scripts.transformer_prediction_interface import TabPFNClassifier
+from sklearn.preprocessing import LabelEncoder
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -36,43 +37,47 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
     
     start_time = time.time()
-
+    label_encoder = LabelEncoder()
     #meta training loop
     for e in range(epochs):
         print('=' * 15, 'Epoch', e,'=' * 15)
-        meta_data_loader = meta_dataset_loader(datasets, num_samples_per_class)
+        support_dataset, query_dataset = meta_dataset_loader2(datasets)
         
         accumulator = 0
         
-        for i, batch in enumerate(meta_data_loader):
-            x,y = batch['x'], batch['y']
-            x_support, x_query = np.split(x,2)
-            y_support, y_query = np.split(y,2)
+        for i in range(len(support_dataset)):
+    
+            x_support, y_support = support_dataset[i].values()
+            x_query, y_query = query_dataset[i].values()
             
+            y_query = label_encoder.fit_transform(y_query)
+
+            # if (len(np.unique(y_support))>0 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
+                
             classifier.fit(x_support, y_support)
             optimizer.zero_grad()
             prediction = classifier.predict_proba2(x_query)
             prediction = prediction.squeeze(0)
             loss = criterion(prediction,torch.from_numpy(y_query).to(device))
+            print('epoch',e,'|','loss =',loss.item()) #if i%10 == 0 else None
             loss.backward()
             optimizer.step()
             accumulator += loss.item()
-            
-            classifier.fit(x_query, y_query)
-            optimizer.zero_grad()
-            prediction = classifier.predict_proba2(x_support)
-            prediction = prediction.squeeze(0)
-            loss = criterion(prediction,torch.from_numpy(y_support).to(device))
-            print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
-            loss.backward()
-            optimizer.step()
-            accumulator += loss.item()
+                
+                # classifier.fit(x_query, y_query)
+                # optimizer.zero_grad()
+                # prediction = classifier.predict_proba2(x_support)
+                # prediction = prediction.squeeze(0)
+                # loss = criterion(prediction,torch.from_numpy(y_support).to(device))
+                # loss.backward()
+                # optimizer.step()
+                # accumulator += loss.item()
                 
         
         test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
         
         
-        accumulator /= (len(meta_data_loader)*2)
+        accumulator /= len(support_dataset)
         print('=' * 15, 'Accumulator', e,'=' * 15)     
         print('Accumulator =',accumulator)  
         

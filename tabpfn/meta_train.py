@@ -55,7 +55,6 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
             # if (len(np.unique(y_support))>0 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
             if(len(np.unique(y_support))>1):
                 
-                print(len(np.unique(y_support)))
                 classifier.fit(x_support, y_support)
                 optimizer.zero_grad()
                 prediction = classifier.predict_proba2(x_query)

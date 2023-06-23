@@ -53,17 +53,18 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
             y_query = label_encoder.fit_transform(y_query)
 
             # if (len(np.unique(y_support))>0 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
+            if(len(np.unique(y_support))>1)
                 
-            classifier.fit(x_support, y_support)
-            optimizer.zero_grad()
-            prediction = classifier.predict_proba2(x_query)
-            prediction = prediction.squeeze(0)
-            loss = criterion(prediction,torch.from_numpy(y_query).to(device))
-            print('epoch',e,'|','loss =',loss.item()) #if i%10 == 0 else None
-            loss.backward()
-            optimizer.step()
-            accumulator += loss.item()
-                
+                classifier.fit(x_support, y_support)
+                optimizer.zero_grad()
+                prediction = classifier.predict_proba2(x_query)
+                prediction = prediction.squeeze(0)
+                loss = criterion(prediction,torch.from_numpy(y_query).to(device))
+                print('epoch',e,'|','loss =',loss.item()) #if i%10 == 0 else None
+                loss.backward()
+                optimizer.step()
+                accumulator += loss.item()
+                    
                 # classifier.fit(x_query, y_query)
                 # optimizer.zero_grad()
                 # prediction = classifier.predict_proba2(x_support)

@@ -53,7 +53,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
             y_query = label_encoder.fit_transform(y_query)
 
             # if (len(np.unique(y_support))>0 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
-            if(len(np.unique(y_support))>1)
+            if(len(np.unique(y_support))>1):
                 
                 classifier.fit(x_support, y_support)
                 optimizer.zero_grad()

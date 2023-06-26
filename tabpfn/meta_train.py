@@ -100,7 +100,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
         
         loss_history.append(accumulator)
         
-        wandb.log({"acc": test_accuracy_history[i], "loss": loss_history[i]})
+        wandb.log({"acc": test_accuracy_history[e], "loss": loss_history[e]})
 
         #plot loss history
         plt.plot(loss_history)

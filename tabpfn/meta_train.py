@@ -10,7 +10,7 @@ import time
 from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 
-def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0):
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32 ):
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -41,7 +41,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     #meta training loop
     for e in range(epochs):
         print('=' * 15, 'Epoch', e,'=' * 15)
-        support_dataset, query_dataset = meta_dataset_loader2(datasets)
+        support_dataset, query_dataset = meta_dataset_loader2(datasets, query_batch_size, support_batch_size)
         
         accumulator = 0
         
@@ -60,7 +60,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
                 prediction = classifier.predict_proba2(x_query)
                 prediction = prediction.squeeze(0)
                 loss = criterion(prediction,torch.from_numpy(y_query).to(device))
-                print('epoch',e,'|','loss =',loss.item()) #if i%10 == 0 else None
+                print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None
                 loss.backward()
                 optimizer.step()
                 accumulator += loss.item()

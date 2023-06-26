@@ -9,8 +9,24 @@ from sklearn.metrics import accuracy_score
 import time
 from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
+import wandb
 
 def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32 ):
+    
+    wandb.init(
+    # set the wandb project where this run will be logged
+    project="thesis",
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": lr,
+    "architecture": "TabPFN",
+    "dataset": "meta-dataset",
+    "epochs": epochs,
+    'query_batch_size': query_batch_size,
+    'support_batch_size': support_batch_size,
+    }
+)
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -84,6 +100,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
         
         loss_history.append(accumulator)
         
+        wandb.log({"acc": test_accuracy_history[i], "loss": loss_history[i]})
 
         #plot loss history
         plt.plot(loss_history)

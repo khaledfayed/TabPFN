@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 import wandb
 
-def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32 ):
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0 ):
     
     wandb.init(
     # set the wandb project where this run will be logged
@@ -37,12 +37,12 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
     classifier.model[2].train()
 
-    optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr)
+    optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
 
     dids = [id for id in open_cc_dids if id not in test_datasets]
     print('=' * 15, 'Train Datasets','=' * 15, '\n', dids, '\n')   
-    datasets = load_OHE_dataset(dids, num_augmented_datasets)
+    datasets = load_OHE_dataset([31], num_augmented_datasets)
     # train_dataset= meta_dataset_loader(datasets)
 
     loss_history = []
@@ -157,7 +157,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     # print('Prediction time: ', time.time() - start, 'Accuracy', accuracy_score(unseen_y_query, y_eval), '\n')
     
 def main():
-    run_training(epochs=50)
+    run_training(epochs=50, weight_decay=0.01)
 
 if __name__ == "__main__":
     main()

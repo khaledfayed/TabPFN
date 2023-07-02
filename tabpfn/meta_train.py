@@ -32,7 +32,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     #hyper parameters:
     batch_size = 32
-    test_datasets = [22]
+    test_datasets = [40966]
 
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
     classifier.model[2].train()

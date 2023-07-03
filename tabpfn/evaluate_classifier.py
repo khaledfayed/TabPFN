@@ -9,9 +9,11 @@ def evaluate_classifier(classifier, dids, train_data=0.6):
     datasets = load_OHE_dataset(dids)
     
     for dataset in datasets:
+        
+        train_index = int(len(dataset['data'])*train_data) if int(len(dataset['data'])*train_data) < 1000 else 1000
         # fit_batch = meta_dataset_loader([dataset], num_samples_per_class=5, one_batch=True, shuffle=False)
-        fit_data = dataset['data'][:int(len(dataset['data'])*train_data)]
-        fit_target = dataset['target'][:int(len(dataset['data'])*train_data)]
+        fit_data = dataset['data'][:train_index]
+        fit_target = dataset['target'][:train_index]
         start = time.time()
         classifier.fit(fit_data, fit_target)
         y_eval, p_eval = classifier.predict(dataset['data'], return_winning_probability=True)
@@ -22,7 +24,7 @@ def evaluate_classifier(classifier, dids, train_data=0.6):
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
-    evaluate_classifier(classifier, [40966])
+    evaluate_classifier(classifier, [11,15,22,31])
     pass
 
 if __name__ == "__main__":

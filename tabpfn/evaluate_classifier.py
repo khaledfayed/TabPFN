@@ -19,7 +19,7 @@ def evaluate_classifier(classifier, dids, train_data=0.6):
         y_eval, p_eval = classifier.predict(dataset['data'], return_winning_probability=True)
         accuracy = accuracy_score(dataset['target'], y_eval)
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
-        return accuracy
+    return accuracy
         
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'

@@ -48,7 +48,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     loss_history = []
     test_accuracy_history = {id:[] for id in test_datasets}
     for id in test_datasets:
-        test_accuracy_history[id] = test_accuracy_history[id].append(evaluate_classifier(classifier, [id]))
+        test_accuracy_history[id] = test_accuracy_history[id] + [evaluate_classifier(classifier, [id])]
 
 
     #print accuracy for test dataset

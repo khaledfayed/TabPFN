@@ -4,14 +4,13 @@ from sklearn.metrics import accuracy_score
 import time
 import torch
 
-def evaluate_classifier(classifier, dids, train_data=0.4):
+def evaluate_classifier(classifier, dids, train_data=0.7):
     
     datasets = load_OHE_dataset(dids)
     
     for dataset in datasets:
         
         train_index = int(len(dataset['data'])*train_data) if int(len(dataset['data'])*train_data) < 1000 else 1000
-        train_index = 400
         # fit_batch = meta_dataset_loader([dataset], num_samples_per_class=5, one_batch=True, shuffle=False)
         fit_data = dataset['data'][:train_index]
         fit_target = dataset['target'][:train_index]

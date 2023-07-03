@@ -11,12 +11,12 @@ from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 import wandb
 
-def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0 ):
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='' ):
     
     wandb.init(
     # set the wandb project where this run will be logged
     project="thesis",
-    
+    name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
     # track hyperparameters and run metadata
     config={
     "learning_rate": lr,
@@ -32,7 +32,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     #hyper parameters:
     batch_size = 32
-    test_datasets = [40966]
+    test_datasets = [11,15,22,31]
 
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
     classifier.model[2].train()
@@ -46,11 +46,13 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     # train_dataset= meta_dataset_loader(datasets)
 
     loss_history = []
-    test_accuracy_history = []
+    test_accuracy_history = {id:[] for id in test_datasets}
+    for id in test_datasets:
+        test_accuracy_history[id] = test_accuracy_history[id].append(evaluate_classifier(classifier, [id]))
 
 
     #print accuracy for test dataset
-    test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
+    # test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
     
     start_time = time.time()
     label_encoder = LabelEncoder()
@@ -108,10 +110,11 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
         plt.show()
 
         #plot accuracy history
-        plt.plot(test_accuracy_history)
-        plt.axhline(y=test_accuracy_history[0], linestyle='dashed' , color='grey')
+        for id in test_datasets:
+            plt.plot(test_accuracy_history[id], label = f"dataset {id}")
+            plt.axhline(y=test_accuracy_history[id][0], linestyle='dashed' , color='grey')
         plt.savefig(f"plots/{start_time}_accuracy_history.png")
-
+        plt.legend()
         plt.show()
 
     # print('\n')

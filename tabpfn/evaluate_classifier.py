@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score
 import time
 import torch
 
-def evaluate_classifier(classifier, dids, train_data=0.6):
+def evaluate_classifier(classifier, dids, train_data=0.4):
     
     datasets = load_OHE_dataset(dids)
     

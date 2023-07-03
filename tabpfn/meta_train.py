@@ -93,7 +93,8 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
                 # accumulator += loss.item()
                 
         
-        test_accuracy_history.append(evaluate_classifier(classifier, test_datasets))
+        for id in test_datasets:
+            test_accuracy_history[id] = test_accuracy_history[id].append(evaluate_classifier(classifier, [id]))
         
         
         accumulator /= len(support_dataset)

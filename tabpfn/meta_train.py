@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from evaluate_classifier import evaluate_classifier, open_cc_dids
 import wandb
 
-def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='' ):
+def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='', N_ensemble_configurations=4 ):
     
     wandb.init(
     # set the wandb project where this run will be logged
@@ -32,9 +32,9 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     #hyper parameters:
     batch_size = 32
-    test_datasets = [22]
+    test_datasets = [11,15,22,31]
 
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False, no_preprocess_mode=True)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=N_ensemble_configurations, only_inference=False, no_preprocess_mode=True)
     classifier.model[2].train()
 
     optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=weight_decay)

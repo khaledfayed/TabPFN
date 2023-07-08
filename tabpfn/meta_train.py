@@ -34,7 +34,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     batch_size = 32
     test_datasets = [22]
 
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False, no_preprocess_mode=True)
     classifier.model[2].train()
 
     optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=weight_decay)

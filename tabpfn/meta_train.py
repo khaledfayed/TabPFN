@@ -13,20 +13,20 @@ import wandb
 
 def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='' ):
     
-    wandb.init(
-    # set the wandb project where this run will be logged
-    project="thesis",
-    name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
-    # track hyperparameters and run metadata
-    config={
-    "learning_rate": lr,
-    "architecture": "TabPFN",
-    "dataset": "meta-dataset",
-    "epochs": epochs,
-    'query_batch_size': query_batch_size,
-    'support_batch_size': support_batch_size,
-    }
-)
+#     wandb.init(
+#     # set the wandb project where this run will be logged
+#     project="thesis",
+#     name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
+#     # track hyperparameters and run metadata
+#     config={
+#     "learning_rate": lr,
+#     "architecture": "TabPFN",
+#     "dataset": "meta-dataset",
+#     "epochs": epochs,
+#     'query_batch_size': query_batch_size,
+#     'support_batch_size': support_batch_size,
+#     }
+# )
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -34,7 +34,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     batch_size = 32
     test_datasets = [22]
 
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=False, no_grad=False, no_preprocess_mode=True)
     classifier.model[2].train()
 
     optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=weight_decay)
@@ -75,7 +75,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
                 
                 classifier.fit(x_support, y_support)
                 optimizer.zero_grad()
-                prediction = classifier.predict_proba2(x_query)
+                prediction = classifier.predict_proba(x_query)
                 prediction = prediction.squeeze(0)
                 loss = criterion(prediction,torch.from_numpy(y_query).to(device))
                 print('epoch',e,'|','loss =',loss.item()) if i%10 == 0 else None

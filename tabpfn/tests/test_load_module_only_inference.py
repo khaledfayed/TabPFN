@@ -1,7 +1,7 @@
 import unittest
 
-from tabpfn.datasets import load_openml_list, open_cc_dids
-from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
+from datasets import load_openml_list, open_cc_dids
+from scripts.transformer_prediction_interface import TabPFNClassifier
 
 
 class TestLoadModuleOnlyInference(unittest.TestCase):

@@ -4,8 +4,8 @@ import pathlib
 
 from torch.utils.checkpoint import checkpoint
 
-from tabpfn.utils import normalize_data, to_ranking_low_mem, remove_outliers
-from tabpfn.utils import NOP, normalize_by_used_features_f
+from utils import normalize_data, to_ranking_low_mem, remove_outliers
+from utils import NOP, normalize_by_used_features_f
 
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
 
@@ -17,7 +17,7 @@ from sklearn.utils.multiclass import check_classification_targets
 from sklearn.utils import column_or_1d
 from sklearn.preprocessing import LabelEncoder
 from pathlib import Path
-from tabpfn.scripts.model_builder import load_model, load_model_only_inference
+from scripts.model_builder import load_model, load_model_only_inference
 import os
 import pickle
 import io
@@ -251,6 +251,8 @@ class TabPFNClassifier(BaseEstimator, ClassifierMixin):
             X_full = np.concatenate([self.X_, X], axis=0)
             X_full = torch.tensor(X_full, device=self.device).float().unsqueeze(1)
         else:
+            self.X_ = torch.tensor(self.X_, device=self.device,dtype=torch.float64, requires_grad=True).float().unsqueeze(1)
+            X = torch.tensor(X, device=self.device,dtype=torch.float64, requires_grad=True).float().unsqueeze(1)
             assert (torch.is_tensor(self.X_) & torch.is_tensor(X)), "If no_grad is false, this function expects X as " \
                                                                     "a tensor to calculate a gradient"
             X_full = torch.cat((self.X_, X), dim=0).float().unsqueeze(1).to(self.device)
@@ -285,6 +287,7 @@ class TabPFNClassifier(BaseEstimator, ClassifierMixin):
 
     def predict(self, X, return_winning_probability=False, normalize_with_test=False):
         p = self.predict_proba(X, normalize_with_test=normalize_with_test)
+        p = p.detach().cpu().numpy()
         y = np.argmax(p, axis=-1)
         y = self.classes_.take(np.asarray(y, dtype=np.intp))
         if return_winning_probability:
@@ -405,7 +408,7 @@ def transformer_predict(model, eval_xs, eval_ys, eval_position,
             eval_xs = torch.tensor(eval_xs).float()
         warnings.simplefilter('default')
 
-        eval_xs = eval_xs.unsqueeze(1)
+        eval_xs = eval_xs.unsqueeze(1) if no_grad else eval_xs
 
         # TODO: Caution there is information leakage when to_ranking is used, we should not use it
         eval_xs = remove_outliers(eval_xs, normalize_positions=-1 if normalize_with_test else eval_position) \
@@ -421,7 +424,7 @@ def transformer_predict(model, eval_xs, eval_ys, eval_position,
 
     model.to(device)
 
-    model.eval()
+    # model.eval()
 
     import itertools
     if not differentiable_hps_as_style:

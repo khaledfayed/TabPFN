@@ -143,6 +143,8 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
                     y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
                     accuracy = accuracy_score(y_query, y_eval)
                     print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
+                    dataset_id = dataset['id']
+                    wandb.log({f"val_{dataset_id}": accuracy})
 
         print('\n')
 

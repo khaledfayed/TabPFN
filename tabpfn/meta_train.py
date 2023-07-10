@@ -13,20 +13,20 @@ import wandb
 
 def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='', N_ensemble_configurations=4 ):
     
-#     wandb.init(
-#     # set the wandb project where this run will be logged
-#     project="thesis",
-#     name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
-#     # track hyperparameters and run metadata
-#     config={
-#     "learning_rate": lr,
-#     "architecture": "TabPFN",
-#     "dataset": "meta-dataset",
-#     "epochs": epochs,
-#     'query_batch_size': query_batch_size,
-#     'support_batch_size': support_batch_size,
-#     }
-# )
+    wandb.init(
+    # set the wandb project where this run will be logged
+    project="thesis",
+    name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": lr,
+    "architecture": "TabPFN",
+    "dataset": "meta-dataset",
+    "epochs": epochs,
+    'query_batch_size': query_batch_size,
+    'support_batch_size': support_batch_size,
+    }
+)
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

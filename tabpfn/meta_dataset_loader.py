@@ -53,8 +53,8 @@ def load_OHE_dataset(dids, num_augmented_datasets=0):
 
 def split_datasets(datasets, test_percentage=0.2):
     
-    train_datasets = [{'data': dataset['data'][:int((1-test_percentage)*len(dataset['data']))], 'target': dataset['target'][:int((1-test_percentage)*len(dataset['target']))] }for dataset in datasets]
-    test_datasets = [{'data': dataset['data'][int((1-test_percentage)*len(dataset['data'])):], 'target': dataset['target'][int((1-test_percentage)*len(dataset['target'])):] }for dataset in datasets]
+    train_datasets = [{ 'id': dataset['id'], 'data': dataset['data'][:int((1-test_percentage)*len(dataset['data']))], 'target': dataset['target'][:int((1-test_percentage)*len(dataset['target']))] }for dataset in datasets]
+    test_datasets = [{'id': dataset['id'], 'data': dataset['data'][int((1-test_percentage)*len(dataset['data'])):], 'target': dataset['target'][int((1-test_percentage)*len(dataset['target'])):] }for dataset in datasets]
     
     return train_datasets, test_datasets
     

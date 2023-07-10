@@ -1,4 +1,4 @@
-from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader2
+from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader2, split_datasets
 from scripts.transformer_prediction_interface import TabPFNClassifier
 from sklearn.preprocessing import LabelEncoder
 import torch
@@ -13,26 +13,26 @@ import wandb
 
 def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmented_datasets=0, query_batch_size=16, support_batch_size=32, weight_decay=0, wandb_name='', N_ensemble_configurations=4 ):
     
-    wandb.init(
-    # set the wandb project where this run will be logged
-    project="thesis",
-    name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
-    # track hyperparameters and run metadata
-    config={
-    "learning_rate": lr,
-    "architecture": "TabPFN",
-    "dataset": "meta-dataset",
-    "epochs": epochs,
-    'query_batch_size': query_batch_size,
-    'support_batch_size': support_batch_size,
-    }
-)
+#     wandb.init(
+#     # set the wandb project where this run will be logged
+#     project="thesis",
+#     name=f"{wandb_name}_{support_batch_size}_{query_batch_size}_{num_augmented_datasets}_{lr}_{weight_decay}",
+#     # track hyperparameters and run metadata
+#     config={
+#     "learning_rate": lr,
+#     "architecture": "TabPFN",
+#     "dataset": "meta-dataset",
+#     "epochs": epochs,
+#     'query_batch_size': query_batch_size,
+#     'support_batch_size': support_batch_size,
+#     }
+# )
     # settings:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     #hyper parameters:
     batch_size = 32
-    test_datasets = [11,23,22,31]
+    test_datasets = [11,23,31]
 
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=N_ensemble_configurations, only_inference=False, no_preprocess_mode=True, no_grad=False)
     classifier.model[2].train()
@@ -42,7 +42,8 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     dids = [id for id in open_cc_dids if id not in test_datasets]
     print('=' * 15, 'Train Datasets','=' * 15, '\n', dids, '\n')   
-    datasets = load_OHE_dataset(dids, num_augmented_datasets)
+    datasets = load_OHE_dataset([31,14], num_augmented_datasets)
+    train_dataset, val_dataset = split_datasets(datasets)
     # train_dataset= meta_dataset_loader(datasets)
 
     loss_history = []
@@ -59,7 +60,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
     #meta training loop
     for e in range(epochs):
         print('=' * 15, 'Epoch', e,'=' * 15)
-        support_dataset, query_dataset = meta_dataset_loader2(datasets, query_batch_size, support_batch_size)
+        support_dataset, query_dataset = meta_dataset_loader2(train_dataset, query_batch_size, support_batch_size)
         
         accumulator = 0
         
@@ -121,50 +122,30 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
         plt.legend()
         plt.show()
 
-    # print('\n')
+        print('\n')
 
-    # #meta testing loop
-    # print('=' * 15, 'testing','=' * 15)
+        #meta testing loop
+        print('=' * 15, 'val','=' * 15)
 
-    # meta_data_loader = load_meta_data_loader(test_dataset)
+        for dataset in val_dataset:
 
-    # with torch.no_grad():
-    #     for batch in meta_data_loader:
-    #         x,y = batch['x'], batch['y']
-    #         x_support, x_query = np.split(x,2)
-    #         y_support, y_query = np.split(y,2)
-            
-            
-    #         if (len(np.unique(y_support))>1 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
-    #             y_query = torch.from_numpy(y_query).to(device)
-    #             classifier.fit(x_support, y_support)
-    #             prediction = classifier.predict_proba2(x_query)
-    #             prediction = prediction.squeeze(0)
-    #             loss = criterion(prediction,y_query)
-    #             print('loss =',loss.item()) 
+            with torch.no_grad():
+                x_support, x_query = np.split(dataset['data'],2)
+                y_support, y_query = np.split(dataset['target'],2)
+                    
+                    
+                if (len(np.unique(y_support))>1 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):
+                    y_query = torch.from_numpy(y_query).to(device)
+                    start = time.time()
+                    classifier.fit(x_support, y_support)
+                    y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
+                    accuracy = accuracy_score(y_query, y_eval)
+                    print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
 
-    # print('\n')
+        print('\n')
 
-    # #unseen data set accuracy 
-    # print('=' * 15, 'unseen data set accuracy','=' * 15)
-
-    # start = time.time()
-    # classifier.fit(unseen_x_support, unseen_y_support)
-    # y_eval, p_eval = classifier.predict(unseen_x_query, return_winning_probability=True)
-    # print('Prediction time: ', time.time() - start, 'Accuracy', accuracy_score(unseen_y_query, y_eval), '\n')
-
-    # #untuned TabPFN accuracy
-    # print('=' * 15, 'control TabPFN accuracy','=' * 15)
-
-    # control_classifier = TabPFNClassifier(device=device, N_ensemble_configurations=4, only_inference=True)
-
-    # start = time.time()
-    # control_classifier.fit(unseen_x_support, unseen_y_support)
-    # y_eval, p_eval = control_classifier.predict(unseen_x_query, return_winning_probability=True)
-    # print('Prediction time: ', time.time() - start, 'Accuracy', accuracy_score(unseen_y_query, y_eval), '\n')
-    
 def main():
-    run_training(epochs=50, weight_decay=0.01)
+    run_training(epochs=50, weight_decay=0.01, support_batch_size=128)
 
 if __name__ == "__main__":
     main()

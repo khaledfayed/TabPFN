@@ -32,7 +32,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     #hyper parameters:
     batch_size = 32
-    test_datasets = [11,23,31]
+    test_datasets = [11,23,22,31]
 
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=N_ensemble_configurations, only_inference=False, no_preprocess_mode=True, no_grad=False)
     classifier.model[2].train()
@@ -42,7 +42,7 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
 
     dids = [id for id in open_cc_dids if id not in test_datasets]
     print('=' * 15, 'Train Datasets','=' * 15, '\n', dids, '\n')   
-    datasets = load_OHE_dataset([31,14], num_augmented_datasets)
+    datasets = load_OHE_dataset(dids, num_augmented_datasets)
     train_dataset, val_dataset = split_datasets(datasets)
     # train_dataset= meta_dataset_loader(datasets)
 

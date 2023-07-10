@@ -130,8 +130,10 @@ def run_training(epochs=20, lr = 0.00001, num_samples_per_class=16, num_augmente
         for dataset in val_dataset:
 
             with torch.no_grad():
-                x_support, x_query = np.split(dataset['data'],2)
-                y_support, y_query = np.split(dataset['target'],2)
+                x_support = dataset['data'][:int((1-0.25)*len(dataset['data']))]
+                x_query = dataset['data'][int((1-0.25)*len(dataset['data'])):]
+                y_support = dataset['target'][:int((1-0.25)*len(dataset['target']))]
+                y_query = dataset['target'][int((1-0.25)*len(dataset['target'])):]
                     
                     
                 if (len(np.unique(y_support))>1 and np.all(np.sort(np.unique(y_support)) == np.sort(np.unique(y_query)))):

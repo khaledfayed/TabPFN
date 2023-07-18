@@ -8,12 +8,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 
 
-def train():
+def train(lr=0.00001):
     epochs = 100
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     classifier.model[2].train()
-    optimizer = optim.Adam(classifier.model[2].parameters(), lr=0.00001, weight_decay=0)
+    optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=0)
     criterion = nn.CrossEntropyLoss()
     datasets = load_OHE_dataset([1068])
     train_dataset = {'data':datasets[0]['data'][:1024], 'target': datasets[0]['target'][:1024]}

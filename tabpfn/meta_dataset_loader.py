@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.datasets import load_breast_cancer, load_iris, fetch_openml
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
 from sklearn.model_selection import train_test_split
 import openml
 from sklearn.compose import ColumnTransformer
@@ -17,8 +17,8 @@ def shuffle_dataset_features(transformed_data):
     
     return augmented_data
 
-def load_OHE_dataset(dids, num_augmented_datasets=0):
-    encoder = OneHotEncoder()
+def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True):
+    encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
     label_encoder = LabelEncoder()
 
     datasets = openml.datasets.get_datasets(dids)

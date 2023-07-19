@@ -24,24 +24,24 @@ def train(lr=0.00001, one_hot_encode=True):
     y_query = train_dataset['target'][:512]
     label_encoder = LabelEncoder()
     
-    # for e in range(epochs):
-    #     # y_query = label_encoder.fit_transform(y_query)
-    #     classifier.fit(x_support, y_support)
-    #     y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
-    #     accuracy = accuracy_score(y_query, y_eval)
+    for e in range(epochs):
+        # y_query = label_encoder.fit_transform(y_query)
+        classifier.fit(x_support, y_support)
+        y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
+        accuracy = accuracy_score(y_query, y_eval)
             
-    #     optimizer.zero_grad()
-    #     prediction = classifier.predict_proba2(x_query)
-    #     prediction = prediction.squeeze(0)
-    #     loss = criterion(prediction,torch.from_numpy(y_query).to(device))
-    #     print('epoch',e,'|','loss =',loss.item(),'|','acc =',accuracy)
-    #     loss.backward()
-    #     optimizer.step()
+        optimizer.zero_grad()
+        prediction = classifier.predict_proba2(x_query)
+        prediction = prediction.squeeze(0)
+        loss = criterion(prediction,torch.from_numpy(y_query).to(device))
+        print('epoch',e,'|','loss =',loss.item(),'|','acc =',accuracy)
+        loss.backward()
+        optimizer.step()
     
-    classifier.fit(x_support, y_support)
-    y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
-    accuracy = accuracy_score(y_query, y_eval)
-    print('acc =',accuracy)    
+    # classifier.fit(x_support, y_support)
+    # y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
+    # accuracy = accuracy_score(y_query, y_eval)
+    # print('acc =',accuracy)    
     
 def main():
     train(one_hot_encode=False)

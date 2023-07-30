@@ -11,6 +11,9 @@ import wandb
 
 def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     
+    epochs = 100
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    
     wandb.init(
     # set the wandb project where this run will be logged
     project="thesis",
@@ -24,10 +27,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     }
 )
     
-    train_dids = [1068]
+    train_dids = [23, 46, 50, 183, 307, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 4552, 40677, 40971, 1549, 1553, 42193]
     test_dids = [31]
-    epochs = 100
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     classifier.model[2].train()
     optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr)

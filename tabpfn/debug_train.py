@@ -15,26 +15,32 @@ def train(lr=0.00001):
     classifier.model[2].train()
     optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr, weight_decay=0)
     criterion = nn.CrossEntropyLoss()
-    datasets = load_OHE_dataset([1068])
+    datasets = load_OHE_dataset([1049])
     train_dataset = {'data':datasets[0]['data'][:1024], 'target': datasets[0]['target'][:1024]}
     val_dataset = {'data':datasets[0]['data'][1024:], 'target': datasets[0]['target'][1024:]}
     x_support = train_dataset['data'][:512]
-    x_query = train_dataset['data'][:512]
+    x_query = train_dataset['data'][512:1024]
     y_support = train_dataset['target'][:512]
-    y_query = train_dataset['target'][:512]
+    y_query = train_dataset['target'][512:1024]
+    x_test = val_dataset['data']
+    y_test = val_dataset['target']
     label_encoder = LabelEncoder()
     
     for e in range(epochs):
         # y_query = label_encoder.fit_transform(y_query)
         classifier.fit(x_support, y_support)
-        y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
-        accuracy = accuracy_score(y_query, y_eval)
+        with torch.no_grad():
+        
+            y_eval, p_eval = classifier.predict(x_query, return_winning_probability=True)
+            query_accuracy = accuracy_score(y_query, y_eval)
+            y_eval, p_eval = classifier.predict(x_test, return_winning_probability=True)
+            test_accuracy = accuracy_score(y_test, y_eval)
             
         optimizer.zero_grad()
         prediction = classifier.predict_proba2(x_query)
         prediction = prediction.squeeze(0)
         loss = criterion(prediction,torch.from_numpy(y_query).to(device))
-        print('epoch',e,'|','loss =',loss.item(),'|','acc =',accuracy)
+        print('epoch',e,'|','loss =',loss.item(),'|','query_acc =',query_accuracy,'|','test_acc =',test_accuracy)
         loss.backward()
         optimizer.step()
         

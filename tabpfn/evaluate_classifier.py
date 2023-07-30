@@ -20,11 +20,26 @@ def evaluate_classifier(classifier, dids, train_data=0.7):
         accuracy = accuracy_score(dataset['target'], y_eval)
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
     return accuracy
+
+def evaluate_classifier2(classifier, datasets, train_data=0.7):
+    
+    
+    for dataset in datasets:
+        
+        fit_data = dataset['data'][:512]
+        fit_target = dataset['target'][:512]
+        start = time.time()
+        classifier.fit(fit_data, fit_target)
+        y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
+        accuracy = accuracy_score(dataset['target'][512:], y_eval)
+        print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
+    return accuracy
         
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, no_grad=False, no_preprocess_mode=True)
-    evaluate_classifier(classifier, [11])
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    data = load_OHE_dataset([31], one_hot_encode=False)
+    evaluate_classifier2(classifier, data)
     pass
 
 if __name__ == "__main__":

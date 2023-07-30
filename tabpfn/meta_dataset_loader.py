@@ -6,6 +6,8 @@ import openml
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 import pandas as pd
+import random
+
 
 from numpy.random import default_rng
 
@@ -17,7 +19,24 @@ def shuffle_dataset_features(transformed_data):
     
     return augmented_data
 
-def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True):
+def drop_dataset_features(dataframe, num_features_to_drop=0):
+    modified_df = dataframe.copy()
+
+    # Determine the number of features in the DataFrame
+    num_features = len(dataframe.columns)
+
+    # Ensure the number of features to drop is not greater than the total number of features
+    num_features_to_drop = min(num_features_to_drop, num_features)
+
+    # Generate a list of random feature indices to drop
+    features_to_drop = random.sample(range(num_features), num_features_to_drop)
+
+    # Drop the selected features from the DataFrame
+    modified_df.drop(modified_df.columns[features_to_drop], axis=1, inplace=True)
+
+    return modified_df
+
+def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffle=True, drop_features=False):
     encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
     label_encoder = LabelEncoder()
 
@@ -29,9 +48,21 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True):
         X, y, categorical_features, attribute_names = dataset.get_data(
             target=dataset.default_target_attribute,
         )
-        
+                
         df = pd.DataFrame(X, columns=attribute_names)
         
+        if drop_features:
+            random = np.random.randint(len(attribute_names),size=3)
+            dropped_columns = np.array(attribute_names)[random]
+            
+            for column in dropped_columns:
+                index = attribute_names.index(column)
+                attribute_names.remove(column)
+                del categorical_features[index]
+            
+            df.drop(dropped_columns, axis=1, inplace=True)
+        
+                
         categorical_columns = [col for col, is_categorical in zip(attribute_names, categorical_features) if is_categorical]
         
         preprocessor = ColumnTransformer(
@@ -43,8 +74,8 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True):
         
         transformed_data = pipeline.fit_transform(df)
         transformed_targets = label_encoder.fit_transform(y)
-            
-        encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id})
+                    
+        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else transformed_data, 'target': transformed_targets, 'id': dataset.id})
         
         for i in range(num_augmented_datasets):
             encoded_datasets.append({'data': shuffle_dataset_features(transformed_data), 'target': transformed_targets, 'id': f"dataset.id_augmented_{i}"})
@@ -85,7 +116,33 @@ def load_meta_data_loader( datasets, batch_size=16, shuffle=True, num_workers=0)
     
     rng.shuffle(meta_dataset, axis=0)
     
-    return meta_dataset    
+    return meta_dataset
+
+def meta_dataset_loader3(datasets, batch_size=512 ):
+    
+    support_meta_dataset = []
+    query_meta_dataset = []
+    rng = default_rng()
+    
+    for dataset in datasets:
+        
+        dataset_length = len(dataset['data'])
+        
+        dataset_indices = np.arange(dataset_length)
+        rng.shuffle(dataset_indices)
+        
+        data = dataset['data'][dataset_indices]
+        targets = dataset['target'][dataset_indices]
+        
+        for i in range(0, dataset_length, batch_size):
+            if (dataset_length-i) > batch_size:
+                support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size]})
+                query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size]})
+                
+    meta_dataset_indices = np.arange(len(support_meta_dataset))
+    rng.shuffle(meta_dataset_indices)
+    return np.array(support_meta_dataset)[meta_dataset_indices], np.array(query_meta_dataset)[meta_dataset_indices]
+        
 
 def meta_dataset_loader2(datasets, support_batch_size=32, query_batch_size=16 ):
     # datasets = [{'data': np.array([[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20],[29,220],[29,220]]), 'target': np.array([0,1,1,1,1,0,0,1,1,0,0,1])}]
@@ -223,9 +280,12 @@ def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, s
 
 def main():
     datasets = load_OHE_dataset([31])
-    data = meta_dataset_loader2(datasets)
+    # support, query = meta_dataset_loader3(datasets)
+    
+    # print(len(support), len(query))
+    # for i in range(len(support)):
+    #     print(len(support[i]['x']), len(query[i]['x']))
    
-    pass
 
 if __name__ == "__main__":
     main()

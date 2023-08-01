@@ -136,8 +136,8 @@ def meta_dataset_loader3(datasets, batch_size=512 ):
         
         for i in range(0, dataset_length, batch_size):
             if (dataset_length-i) > batch_size:
-                support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size]})
-                query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size]})
+                support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size],  'id' : dataset['id']})
+                query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size], 'id' : dataset['id']})
                 
     meta_dataset_indices = np.arange(len(support_meta_dataset))
     rng.shuffle(meta_dataset_indices)

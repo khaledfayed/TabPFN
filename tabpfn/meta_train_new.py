@@ -45,7 +45,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     
     for e in range(epochs):
         
-        # accumulator = 0
+        accumulator = 0
         
         for i in range(len(support_dataset)):
             
@@ -68,10 +68,11 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
             loss.backward()
             optimizer.step()
             wandb.log({'loss': loss.item()})
-            # accumulator += loss.item()
+            accumulator += loss.item()
             
-        # accumulator /= len(support_dataset)
-        # loss_history.append(accumulator)    
+        accumulator /= len(support_dataset)
+        wandb.log({'avg_loss': accumulator})
+        loss_history.append(accumulator)    
     
 def main():
     train()

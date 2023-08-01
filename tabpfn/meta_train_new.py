@@ -68,6 +68,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
             loss.backward()
             optimizer.step()
             wandb.log({'loss': loss.item()})
+            did = support_dataset[i]['id']
+            wandb.log({f"loss_train_dataset_{did}": loss.item()})
             accumulator += loss.item()
             
         accumulator /= len(support_dataset)

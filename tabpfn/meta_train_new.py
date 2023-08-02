@@ -33,8 +33,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     test_dids = [31]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     classifier.model[2].train()
-    optimizer = optim.Adam(classifier.model[2].parameters(), lr=lr)
-    criterion = nn.CrossEntropyLoss(reduction='none')
+    optimizer = optim.AdamW(classifier.model[2].parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
     datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets)
     
     support_dataset, query_dataset = meta_dataset_loader3(datasets)

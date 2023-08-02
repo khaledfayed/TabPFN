@@ -44,12 +44,12 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     loss_history = []
     # label_encoder = LabelEncoder() 
     
-    for e in range(epochs):
+    # for e in range(epochs):
+                
+    for i in range(len(support_dataset)):
         
-        accumulator = 0
+        for step in range(20):
         
-        for i in range(len(support_dataset)):
-            
             accuracy = evaluate_classifier2(classifier, test_datasets)
             wandb.log({'accuracy': accuracy})
         
@@ -71,12 +71,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
             wandb.log({'loss': loss.item()})
             did = support_dataset[i]['id']
             wandb.log({f"loss_train_dataset_{did}": loss.item()})
-            accumulator += loss.item()
-            
-        accumulator /= len(support_dataset)
-        wandb.log({'avg_loss': accumulator})
-        loss_history.append(accumulator)    
-    
+        
+
 def main():
     train()
 

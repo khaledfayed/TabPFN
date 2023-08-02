@@ -48,7 +48,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
                 
     for i in range(len(support_dataset)):
         
-        for step in range(20):
+        for e in range(epochs):
         
             accuracy = evaluate_classifier2(classifier, test_datasets)
             wandb.log({'accuracy': accuracy})

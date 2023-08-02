@@ -11,7 +11,7 @@ import wandb
 
 def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     
-    epochs = 100
+    epochs = 20
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     wandb.init(

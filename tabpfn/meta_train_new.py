@@ -46,16 +46,18 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=100):
     
     for i in range(len(support_dataset)):
     
-        x_support = support_dataset[i]['x']
-        y_support = support_dataset[i]['y']
-        x_query = query_dataset[i]['x']
-        y_query = query_dataset[i]['y']    
-            
-            # y_query = label_encoder.fit_transform(y_query)
-        classifier.fit(x_support, y_support)
+        
         # accumulator = 0
         
         for e in range(epochs):
+            
+            x_support = support_dataset[i]['x']
+            y_support = support_dataset[i]['y']
+            x_query = query_dataset[i]['x']
+            y_query = query_dataset[i]['y']    
+            
+            # y_query = label_encoder.fit_transform(y_query)
+        classifier.fit(x_support, y_support)
             
             accuracy = evaluate_classifier2(classifier, test_datasets)
             wandb.log({'accuracy': accuracy})

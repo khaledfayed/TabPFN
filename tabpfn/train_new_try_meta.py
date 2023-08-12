@@ -47,6 +47,8 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
 def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
+    epochs = 100
+    
     wandb.init(
     # set the wandb project where this run will be logged
     project="thesis",
@@ -59,7 +61,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     "epochs": epochs,
     })
     
-    epochs = 100
+    
 
     train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
     test_dids = [31]

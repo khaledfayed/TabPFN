@@ -119,7 +119,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
                 # output = torch.nn.functional.softmax(output, dim=-1)
                 x = torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()
                 y = output.reshape(-1, num_classes)
-                print(x.device, y.device, device)
+                print(x.device, y.device, model.device, X_full.device,y_full.device)
                 losses = criterion(output.reshape(-1, num_classes), torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])
                 

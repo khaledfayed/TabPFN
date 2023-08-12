@@ -114,7 +114,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
                 
                 criterion.weight=torch.ones(num_classes)
                 
-                model.to(device), X_full.to(device), y_full.to(device), criterion.to(device)
+                # model.to(device), X_full.to(device), y_full.to(device), criterion.to(device)
                 output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                 # output = torch.nn.functional.softmax(output, dim=-1)
                 x = torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()

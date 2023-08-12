@@ -17,7 +17,14 @@ def shuffle_dataset_features(transformed_data):
     shuffled_columns = np.random.permutation(num_cols)
     augmented_data = augmented_data[:, shuffled_columns]
     
-    return augmented_data
+    return zero_pad_dataset_features(augmented_data)
+
+def zero_pad_dataset_features(transformed_data):
+    padding_amount = 100 - transformed_data.shape[1]  # Adjust this value based on your needs
+    padded_data = np.zeros((transformed_data.shape[0], transformed_data.shape[1] + padding_amount))
+    padded_data[:, :transformed_data.shape[1]] = transformed_data
+    
+    return padded_data
 
 def drop_dataset_features(dataframe, num_features_to_drop=0):
     modified_df = dataframe.copy()
@@ -75,7 +82,7 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffl
         transformed_data = pipeline.fit_transform(df)
         transformed_targets = label_encoder.fit_transform(y)
                     
-        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else transformed_data, 'target': transformed_targets, 'id': dataset.id})
+        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else zero_pad_dataset_features(transformed_data), 'target': transformed_targets, 'id': dataset.id})
         
         for i in range(num_augmented_datasets):
             encoded_datasets.append({'data': shuffle_dataset_features(transformed_data), 'target': transformed_targets, 'id': f"dataset.id_augmented_{i}"})
@@ -118,7 +125,7 @@ def load_meta_data_loader( datasets, batch_size=16, shuffle=True, num_workers=0)
     
     return meta_dataset
 
-def meta_dataset_loader3(datasets, batch_size=512 ):
+def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
     
     support_meta_dataset = []
     query_meta_dataset = []
@@ -129,7 +136,7 @@ def meta_dataset_loader3(datasets, batch_size=512 ):
         dataset_length = len(dataset['data'])
         
         dataset_indices = np.arange(dataset_length)
-        rng.shuffle(dataset_indices)
+        rng.shuffle(dataset_indices) if shuffle else None
         
         data = dataset['data'][dataset_indices]
         targets = dataset['target'][dataset_indices]

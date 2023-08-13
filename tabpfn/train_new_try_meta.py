@@ -63,11 +63,13 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
     
 
-    train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
+    train_dids = [11, 23, 28, 30, 37, 44, 46, 50, 60, 181, 182, 311, 333, 334, 335, 1547, 1049, 1069, 4538, 1552, 1050, 799, 1056, 715, 725, 728, 735, 737, 740, 752, 772, 1068, 803, 807, 816, 819, 833, 837, 847, 1507, 871, 903, 923, 934, 1466, 1475, 1487, 1494, 761, 1496, 1497, 1504, 375, 377, 458, 469, 1063, 1462, 1480, 1510, 40496, 717, 750, 770, 825, 826, 841, 884, 886, 920, 936, 937, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40704, 40705, 40706, 40983, 40994, 40982, 40498, 40677, 40691, 40900, 1528, 1529, 1530, 1535, 1538, 1541, 1542, 1549, 1553, 42193]
+
+    # train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
     test_dids = [31]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
-    datasets = load_OHE_dataset(open_cc_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+    datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
 
     
     test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)

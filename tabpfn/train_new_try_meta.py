@@ -122,28 +122,32 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
                 losses = losses.view(*output.shape[0:2])
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
-                # loss = loss / aggregate_k_gradients
+                loss = loss / aggregate_k_gradients
                 
-                accuracy = evaluate_classifier2(classifier, test_datasets)
+                # accuracy = evaluate_classifier2(classifier, test_datasets)
                 
                 accumulator += loss.item()
-                print('Epoch:', e, '|' "loss :", loss.item(), '|', "accuracy :", accuracy )
+                print('Epoch:', e, '|' "loss :", loss.item() )
                 did = support_dataset[i]['id']
-                wandb.log({f"loss_{did}": loss.item(), "accuracy": accuracy})
+                wandb.log({f"loss_{did}": loss.item()})
                 loss.backward()
-                optimizer.step()
-                optimizer.zero_grad()    
+                
+                if i % aggregate_k_gradients == aggregate_k_gradients - 1:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                    try:
+                        optimizer.step()
+                        accuracy = evaluate_classifier2(classifier, test_datasets)
+                        wandb.log({ "accuracy": accuracy})
+
+                    except:
+                        print("Invalid optimization step encountered")
+                    
+                    optimizer.zero_grad()
+                # optimizer.step()
+                # optimizer.zero_grad()    
             
             else:
                 print('Skipping dataset', i, 'with only one class')
-            # if batch % aggregate_k_gradients == aggregate_k_gradients - 1:
-            #     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-            #     try:
-            #         optimizer.step()
-            #         accuracy = evaluate_classifier2(classifier, datasets)
-            #     except:
-            #         print("Invalid optimization step encountered")
-            #     optimizer.zero_grad()
             
         accumulator /= len(support_dataset)
         wandb.log({"average_loss": accumulator})

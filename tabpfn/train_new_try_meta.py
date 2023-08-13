@@ -68,8 +68,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
     datasets = load_OHE_dataset(open_cc_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
-    
-    support_dataset, query_dataset = meta_dataset_loader3(datasets)
+
     
     test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)
 
@@ -94,6 +93,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     for e in range(epochs):
         
         accumulator = 0
+        support_dataset, query_dataset = meta_dataset_loader3(datasets)
         
         for i in range(len(support_dataset)):
     

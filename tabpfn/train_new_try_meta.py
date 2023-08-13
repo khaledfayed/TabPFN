@@ -87,6 +87,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
     
     print('Start training')
+    accuracy = evaluate_classifier2(classifier, test_datasets)
+    wandb.log({ "accuracy": accuracy})
     
     model.train()
         

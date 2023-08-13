@@ -63,11 +63,11 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
     
 
-    train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
-    test_dids = [31]
+    # train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
+    test_dids = [1049]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
-    datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+    datasets = load_OHE_dataset(open_cc_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
     
     support_dataset, query_dataset = meta_dataset_loader3(datasets)
     

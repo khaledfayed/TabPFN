@@ -45,10 +45,20 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
         return eval_xs.to(device)
 
-def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
-    
-    epochs = 100
+def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
 
+    wandb.init(
+    # set the wandb project where this run will be logged
+    project="thesis",
+    name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": lr,
+    "architecture": "TabPFN",
+    "dataset": "meta-dataset",
+    "epochs": epochs,
+    })
+    
     
     train_dids = [31]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
@@ -61,9 +71,9 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
     
     model = classifier.model[2]
+    model.to(device)
     config = classifier.c
     criterion = model.criterion
-    criterion2 = nn.CrossEntropyLoss()
     n_out = criterion.weight.shape[0]
     aggregate_k_gradients = config['aggregate_k_gradients']
     
@@ -82,7 +92,6 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
         X_full = np.concatenate([support_dataset[0]['x'], query_dataset[0]['x']], axis=0)
         X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
-        # y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
         y_full = torch.tensor(support_dataset[0]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
         eval_pos = support_dataset[0]['x'].shape[0]
         num_classes = len(torch.unique(y_full))
@@ -104,21 +113,13 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
         
         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
         acc = accuracy_score( torch.from_numpy(query_dataset[0]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
-        # loss = loss / aggregate_k_gradients
         loss.backward()
         print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc)
+        wandb.log({ "loss": loss.item(), "accuracy": acc})
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
         optimizer.zero_grad()    
         
-        # if batch % aggregate_k_gradients == aggregate_k_gradients - 1:
-        #     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-        #     try:
-        #         optimizer.step()
-        #         accuracy = evaluate_classifier2(classifier, datasets)
-        #     except:
-        #         print("Invalid optimization step encountered")
-        #     optimizer.zero_grad()
             
         
         

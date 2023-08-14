@@ -98,6 +98,13 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         eval_pos = support_dataset[0]['x'].shape[0]
         num_classes = len(torch.unique(y_full))
         
+        X_full_test = np.concatenate([support_dataset[0]['x'], x_test], axis=0)
+        X_full_test = torch.tensor(X_full_test, device=device,dtype=torch.float32, requires_grad=False).float().unsqueeze(1)
+        X_full_test = preprocess_input(X_full_test, y_full, eval_pos)
+        X_full_test = torch.cat(
+                [X_full_test,
+                    torch.zeros((X_full_test.shape[0], X_full_test.shape[1], max_features - X_full_test.shape[2])).to(device)], -1)
+        
         X_full = preprocess_input(X_full, y_full, eval_pos)
         # print(X_full[0])
         X_full = torch.cat(
@@ -115,11 +122,15 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         losses = criterion(output.reshape(-1, num_classes), torch.from_numpy(query_dataset[0]['y']).to(device).long().flatten())
         losses = losses.view(*output.shape[0:2])
         
+        with torch.no_grad():
+            test_output = model((None, X_full_test, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
+            test_acc = accuracy_score( torch.from_numpy(y_test).long().flatten().cpu(), torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1) )
+        
         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
         acc = accuracy_score( torch.from_numpy(query_dataset[0]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
         loss.backward()
-        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc)
-        wandb.log({ "loss": loss.item(), "accuracy": acc})
+        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc, "test_acc :", test_acc, )
+        wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
         optimizer.zero_grad()    

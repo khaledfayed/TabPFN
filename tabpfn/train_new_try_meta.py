@@ -10,7 +10,7 @@ from evaluate_classifier import evaluate_classifier2, open_cc_dids
 import wandb
 
 import utils as utils
-from utils import normalize_data, to_ranking_low_mem, remove_outliers
+from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup
 from utils import NOP, normalize_by_used_features_f
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
 
@@ -18,6 +18,7 @@ normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
 max_features = 100
+warmup_epochs=20
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def preprocess_input(eval_xs, eval_ys, eval_position):
         import warnings
@@ -45,7 +46,7 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
         return eval_xs.to(device)
 
-def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
+def train(lr=0.0001, wandb_name='', num_augmented_datasets=0):
     
     epochs = 100
     
@@ -70,7 +71,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
     datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
-
+    
     
     test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)
 
@@ -79,13 +80,15 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
     
     
     model = classifier.model[2]
+    model.to(device)
     config = classifier.c
     criterion = model.criterion
     n_out = criterion.weight.shape[0]
     aggregate_k_gradients = config['aggregate_k_gradients']
     
     optimizer = optim.AdamW(model.parameters(), lr=lr)
-    #add schedular here
+    # scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
+
     
     
     print('Start training')
@@ -118,7 +121,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
                 
                 criterion.weight=torch.ones(num_classes)
                 
-                model.to(device)
+                
                 output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                 # output = torch.nn.functional.softmax(output, dim=-1)
 
@@ -126,14 +129,14 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
                 losses = losses.view(*output.shape[0:2])
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
-                loss = loss / aggregate_k_gradients
-                
-                # accuracy = evaluate_classifier2(classifier, test_datasets)
                 
                 accumulator += loss.item()
-                print('Epoch:', e, '|' "loss :", loss.item() )
+                print('Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                 did = support_dataset[i]['id']
                 wandb.log({f"loss_{did}": loss.item()})
+                
+                loss = loss / aggregate_k_gradients
+                
                 loss.backward()
                 
                 if i % aggregate_k_gradients == aggregate_k_gradients - 1:
@@ -155,6 +158,9 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0):
             
         accumulator /= len(support_dataset)
         wandb.log({"average_loss": accumulator})
+        # scheduler.step()
+        # print(scheduler.get_last_lr())
+        # print()
         
     
 def main():

@@ -144,8 +144,9 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
+                        
                         # accuracy = evaluate_classifier2(classifier, test_datasets)
-                        wandb.log({ "accuracy": accuracy})
+                        print('  22')
 
                     except:
                         print("Invalid optimization step encountered")

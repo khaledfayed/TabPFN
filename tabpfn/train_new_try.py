@@ -64,9 +64,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
     datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
-    
-    support_dataset, query_dataset = meta_dataset_loader3(datasets, shuffle=False)
-    
+        
     #training setup
     
     
@@ -88,6 +86,9 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
     print('accuracy before training =',accuracy)
         
     for batch in range(epochs):
+        
+        support_dataset, query_dataset = meta_dataset_loader3(datasets, shuffle=False)
+
     
         X_full = np.concatenate([support_dataset[0]['x'], query_dataset[0]['x']], axis=0)
         X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=True).float().unsqueeze(1)

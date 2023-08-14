@@ -87,7 +87,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         
     for batch in range(epochs):
         
-        support_dataset, query_dataset = meta_dataset_loader3(datasets, shuffle=False)
+        support_dataset, query_dataset = meta_dataset_loader3(datasets)
 
     
         X_full = np.concatenate([support_dataset[0]['x'], query_dataset[0]['x']], axis=0)

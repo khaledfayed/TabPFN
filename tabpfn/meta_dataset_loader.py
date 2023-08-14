@@ -17,7 +17,7 @@ def shuffle_dataset_features(transformed_data):
     shuffled_columns = np.random.permutation(num_cols)
     augmented_data = augmented_data[:, shuffled_columns]
     
-    return zero_pad_dataset_features(augmented_data)
+    return augmented_data
 
 def zero_pad_dataset_features(transformed_data):
     padding_amount = 100 - transformed_data.shape[1]  # Adjust this value based on your needs
@@ -82,7 +82,7 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffl
         transformed_data = pipeline.fit_transform(df)
         transformed_targets = label_encoder.fit_transform(y)
                     
-        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else zero_pad_dataset_features(transformed_data), 'target': transformed_targets, 'id': dataset.id})
+        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else transformed_data, 'target': transformed_targets, 'id': dataset.id})
         
         for i in range(num_augmented_datasets):
             encoded_datasets.append({'data': shuffle_dataset_features(transformed_data), 'target': transformed_targets, 'id': f"dataset.id_augmented_{i}"})

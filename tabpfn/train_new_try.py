@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from scripts.transformer_prediction_interface import TabPFNClassifier
-from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, split_datasets
+from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, split_datasets, shuffle_dataset_features
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score

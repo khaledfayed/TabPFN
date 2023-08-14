@@ -134,10 +134,23 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
                 predictions = [predictions[i] if prediction[i] == y_test[i] else predictions[i]+1 for i in range(len(prediction))]
                 
             loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+            loss = loss / aggregate_k_gradients
             acc = accuracy_score( torch.from_numpy(query_dataset[i]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
             loss.backward()
             print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc, "test_acc :", test_acc, )
             wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
+            
+            if (i * batch) % aggregate_k_gradients == aggregate_k_gradients - 1:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                    try:
+                        optimizer.step()
+                        # accuracy = evaluate_classifier2(classifier, test_datasets)
+                        wandb.log({ "accuracy": accuracy})
+
+                    except:
+                        print("Invalid optimization step encountered")
+                    
+                    optimizer.zero_grad()
             optimizer.step()
             # accuracy = evaluate_classifier2(classifier, datasets)    
             optimizer.zero_grad()  

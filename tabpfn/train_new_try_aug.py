@@ -151,9 +151,9 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
                         print("Invalid optimization step encountered")
                     
                     optimizer.zero_grad()
-            optimizer.step()
+            # optimizer.step()
             # accuracy = evaluate_classifier2(classifier, datasets)    
-            optimizer.zero_grad()  
+            # optimizer.zero_grad()  
     top= []
     for i in range(len(predictions)):
         if predictions[i]>100:

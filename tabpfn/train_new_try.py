@@ -79,6 +79,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
     optimizer = optim.AdamW(model.parameters(), lr=lr)
     #add schedular here
     
+    predictions = np.zeros((len(y_test)))
     
     print('Start training')
     
@@ -118,14 +119,15 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         
         output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
         # output = torch.nn.functional.softmax(output, dim=-1)
-        # print(torch.sargmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
         losses = criterion(output.reshape(-1, num_classes), torch.from_numpy(query_dataset[0]['y']).to(device).long().flatten())
         losses = losses.view(*output.shape[0:2])
         
         with torch.no_grad():
             test_output = model((None, X_full_test, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
             test_acc = accuracy_score( torch.from_numpy(y_test).long().flatten().cpu(), torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1) )
-        
+            prediction = torch.sargmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1)
+            predictions = [predictions[i] if prediction[i] == y_test[i] else predictions[i]+1 for i in range(len(prediction))]
+            
         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
         acc = accuracy_score( torch.from_numpy(query_dataset[0]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
         loss.backward()
@@ -133,7 +135,8 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
-        optimizer.zero_grad()    
+        optimizer.zero_grad()  
+    print(predictions)  
         
             
         

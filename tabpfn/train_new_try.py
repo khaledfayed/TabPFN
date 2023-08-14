@@ -60,14 +60,16 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
     })
     
     
-    train_dids = [31]
+    train_dids = [1049]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
-    datasets = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
-        
+    datasets1 = load_OHE_dataset(train_dids, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+    datasets = [{'data':datasets1[0]['data'][:1024], 'target': datasets1[0]['target'][:1024], 'id': 0}]
+    x_test = datasets1[0]['data'][1024:]
+    y_test = datasets1[0]['target'][1024:]
     #training setup
     
-    
+
     model = classifier.model[2]
     config = classifier.c
     criterion = model.criterion

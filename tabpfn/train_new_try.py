@@ -136,7 +136,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
         optimizer.zero_grad()  
-    top=[ (i, predictions[i]) for i in range(len(predictions))]            
+    top=[ (i, predictions[i]) if predictions[i]>100 else None for i in range(len(predictions))]            
     print(predictions)  
     print(top)
         

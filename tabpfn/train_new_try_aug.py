@@ -140,13 +140,13 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
             print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc, "test_acc :", test_acc, )
             wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
             
-            if (i * batch) % aggregate_k_gradients == aggregate_k_gradients - 1:
+            if i  % aggregate_k_gradients == aggregate_k_gradients - 1:
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
                         
                         # accuracy = evaluate_classifier2(classifier, test_datasets)
-                        print('  22')
+                        print('  ')
 
                     except:
                         print("Invalid optimization step encountered")

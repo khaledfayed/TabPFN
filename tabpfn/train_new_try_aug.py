@@ -146,7 +146,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
                         optimizer.step()
                         
                         # accuracy = evaluate_classifier2(classifier, test_datasets)
-                        print('  ')
+                        print('  d')
 
                     except:
                         print("Invalid optimization step encountered")

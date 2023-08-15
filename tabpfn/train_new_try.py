@@ -128,11 +128,15 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100, wei
             prediction = torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1)
             predictions = [predictions[i] if prediction[i] == y_test[i] else predictions[i]+1 for i in range(len(prediction))]
             
+            test_losses = criterion(test_output.reshape(-1, num_classes), torch.from_numpy(y_test).to(device).long().flatten())
+            test_losses = losses.view(*output.shape[0:2])
+            test_loss, test_nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+            
         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
         acc = accuracy_score( torch.from_numpy(query_dataset[0]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
         loss.backward()
-        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc, "test_acc :", test_acc, )
-        wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
+        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc,"test_loss:", test_loss.item(), "test_acc :", test_acc, )
+        wandb.log({ "loss": loss.item(), "accuracy": acc, "test_loss": test_loss.item(), "test_acc": test_acc})
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
         optimizer.zero_grad()  

@@ -124,20 +124,15 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100, wei
         
         with torch.no_grad():
             test_output = model((None, X_full_test, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
+            test_acc = accuracy_score( torch.from_numpy(y_test).long().flatten().cpu(), torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1) )
             prediction = torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1)
             predictions = [predictions[i] if prediction[i] == y_test[i] else predictions[i]+1 for i in range(len(prediction))]
             
-            test_losses = criterion(test_output.reshape(-1, len(torch.unique(y_test))), torch.from_numpy(y_test).to(device).long().flatten())
-            test_losses = test_losses.view(*test_losses.shape[0:2])
-            test_loss, test_nan_share = utils.torch_nanmean(test_losses.mean(0), return_nanshare=True)
-            
-            test_acc = accuracy_score( torch.from_numpy(y_test).long().flatten().cpu(), torch.argmax(test_output.reshape(-1, num_classes).detach().cpu(), axis=1) )
-
         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
         acc = accuracy_score( torch.from_numpy(query_dataset[0]['y']).long().flatten().cpu(), torch.argmax(output.reshape(-1, num_classes).detach().cpu(), axis=1) )
         loss.backward()
-        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc,"test_loss:", test_loss.item(), "test_acc :", test_acc, )
-        wandb.log({ "loss": loss.item(), "accuracy": acc, "test_loss": test_loss.item(), "test_acc": test_acc})
+        print('Batch:', batch, "loss :", loss.item(), "accuracy :", acc, "test_acc :", test_acc, )
+        wandb.log({ "loss": loss.item(), "accuracy": acc, "test_acc": test_acc})
         optimizer.step()
         # accuracy = evaluate_classifier2(classifier, datasets)    
         optimizer.zero_grad()  

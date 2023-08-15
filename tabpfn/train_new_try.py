@@ -50,7 +50,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100, wei
     wandb.init(
     # set the wandb project where this run will be logged
     project="thesis",
-    name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
+    name=f"{wandb_name}_{num_augmented_datasets}_{lr}_{weight_decay}",
     # track hyperparameters and run metadata
     config={
     "learning_rate": lr,

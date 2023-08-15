@@ -45,12 +45,12 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
         return eval_xs.to(device)
 
-def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
+def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100, weight_decay=0.0):
 
     wandb.init(
     # set the wandb project where this run will be logged
     project="thesis",
-    name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
+    name=f"{wandb_name}_{num_augmented_datasets}_{lr}_{weight_decay}",
     # track hyperparameters and run metadata
     config={
     "learning_rate": lr,
@@ -79,7 +79,7 @@ def train(lr=0.00001, wandb_name='', num_augmented_datasets=0, epochs = 100):
     n_out = criterion.weight.shape[0]
     aggregate_k_gradients = config['aggregate_k_gradients']
     
-    optimizer = optim.AdamW(model.parameters(), lr=lr)
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     #add schedular here
     
     predictions = np.zeros((len(y_test)))

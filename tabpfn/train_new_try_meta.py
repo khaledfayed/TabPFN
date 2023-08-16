@@ -79,7 +79,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     model = classifier.model[2]
-    model.to(device)
     config = classifier.c
     criterion = model.criterion
     n_out = criterion.weight.shape[0]
@@ -120,6 +119,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 
                 criterion.weight=torch.ones(num_classes)
                 
+                model.to(device)
                 
                 output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                 # output = torch.nn.functional.softmax(output, dim=-1)

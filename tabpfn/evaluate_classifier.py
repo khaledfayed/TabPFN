@@ -38,7 +38,7 @@ def evaluate_classifier2(classifier, datasets, train_data=0.7):
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
-    data = load_OHE_dataset([31], one_hot_encode=False)
+    data = load_OHE_dataset([1049], one_hot_encode=False)
     evaluate_classifier2(classifier, data)
     pass
 
@@ -74,7 +74,6 @@ open_cc_dids = [
 auto_ml_dids = [23,
  28,
  30,
- 31,
  44,
  46,
  60,

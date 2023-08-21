@@ -165,6 +165,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator /= len(support_dataset)
         if e==4:
             accuracy = evaluate_classifier2(classifier, test_datasets)
+            return
         wandb.log({"average_loss": accumulator})
         # scheduler.step()
         # print(scheduler.get_last_lr())

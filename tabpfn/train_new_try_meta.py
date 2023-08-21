@@ -100,7 +100,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     for e in range(epochs):
         
         accumulator = 0
-        support_dataset, query_dataset = meta_dataset_loader3(datasets)
+        support_dataset, query_dataset = meta_dataset_loader3(datasets, shuffle=False)
         
         for i in range(len(support_dataset)):
             
@@ -143,21 +143,21 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     
                     loss.backward()
                     
-                    # if i % aggregate_k_gradients == aggregate_k_gradients - 1:
-                    #     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-                    #     try:
-                    #         optimizer.step()
-                    #         # with torch.no_grad():
+                    if i % aggregate_k_gradients == aggregate_k_gradients - 1:
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                        try:
+                            optimizer.step()
+                            # with torch.no_grad():
 
-                    #         #     accuracy = evaluate_classifier2(classifier, test_datasets)
-                    #         #     wandb.log({ "accuracy": accuracy})
+                            #     accuracy = evaluate_classifier2(classifier, test_datasets)
+                            #     wandb.log({ "accuracy": accuracy})
 
-                    #     except:
-                    #         print("Invalid optimization step encountered")
+                        except:
+                            print("Invalid optimization step encountered")
                         
-                    #     optimizer.zero_grad()
-                    optimizer.step()
-                    optimizer.zero_grad()    
+                        optimizer.zero_grad()
+                # optimizer.step()
+                # optimizer.zero_grad()    
             
                 else:
                     print('Skipping dataset', i, 'with only one class')
@@ -165,6 +165,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator /= len(support_dataset)
         if e==4:
             accuracy = evaluate_classifier2(classifier, test_datasets)
+            return
         wandb.log({"average_loss": accumulator})
         # scheduler.step()
         # print(scheduler.get_last_lr())

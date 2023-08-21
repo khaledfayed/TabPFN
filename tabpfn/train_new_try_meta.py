@@ -13,6 +13,7 @@ import utils as utils
 from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup
 from utils import NOP, normalize_by_used_features_f
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
+from torch.cuda.amp import autocast
 
 normalize_with_test= False
 normalize_with_sqrt= False
@@ -101,59 +102,61 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         support_dataset, query_dataset = meta_dataset_loader3(datasets)
         
         for i in range(len(support_dataset)):
-    
-            X_full = np.concatenate([support_dataset[i]['x'], query_dataset[i]['x']], axis=0)
-            X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
-            # y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
-            y_full = torch.tensor(support_dataset[i]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
-            eval_pos = support_dataset[i]['x'].shape[0]
-            num_classes = len(torch.unique(y_full))
-            num_classes_query = len(np.unique(query_dataset[i]['y']))
             
-            if num_classes > 1 and num_classes_query <= num_classes:
-                X_full = preprocess_input(X_full, y_full, eval_pos)
-                # print(X_full[0])
-                X_full = torch.cat(
-                        [X_full,
-                        torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
+            with autocast(enabled=True):
+    
+                X_full = np.concatenate([support_dataset[i]['x'], query_dataset[i]['x']], axis=0)
+                X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
+                # y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
+                y_full = torch.tensor(support_dataset[i]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
+                eval_pos = support_dataset[i]['x'].shape[0]
+                num_classes = len(torch.unique(y_full))
+                num_classes_query = len(np.unique(query_dataset[i]['y']))
                 
-                criterion.weight=torch.ones(num_classes)
-                
-                model.to(device)
-                
-                output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
-                # output = torch.nn.functional.softmax(output, dim=-1)
-
-                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                losses = losses.view(*output.shape[0:2])
-                
-                loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
-                
-                accumulator += loss.item()
-                print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
-                did = support_dataset[i]['id']
-                wandb.log({f"loss_{did}": loss.item()})
-                
-                loss = loss / aggregate_k_gradients
-                
-                loss.backward()
-                
-                if i % aggregate_k_gradients == aggregate_k_gradients - 1:
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-                    try:
-                        optimizer.step()
-                        accuracy = evaluate_classifier2(classifier, test_datasets)
-                        wandb.log({ "accuracy": accuracy})
-
-                    except:
-                        print("Invalid optimization step encountered")
+                if num_classes > 1 and num_classes_query <= num_classes:
+                    X_full = preprocess_input(X_full, y_full, eval_pos)
+                    # print(X_full[0])
+                    X_full = torch.cat(
+                            [X_full,
+                            torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
                     
-                    optimizer.zero_grad()
+                    criterion.weight=torch.ones(num_classes)
+                    
+                    model.to(device)
+                    
+                    output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
+                    # output = torch.nn.functional.softmax(output, dim=-1)
+
+                    losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                    losses = losses.view(*output.shape[0:2])
+                    
+                    loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+                    
+                    accumulator += loss.item()
+                    print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                    did = support_dataset[i]['id']
+                    wandb.log({f"loss_{did}": loss.item()})
+                    
+                    loss = loss / aggregate_k_gradients
+                    
+                    loss.backward()
+                    
+                    if i % aggregate_k_gradients == aggregate_k_gradients - 1:
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                        try:
+                            optimizer.step()
+                            accuracy = evaluate_classifier2(classifier, test_datasets)
+                            wandb.log({ "accuracy": accuracy})
+
+                        except:
+                            print("Invalid optimization step encountered")
+                        
+                        optimizer.zero_grad()
                 # optimizer.step()
                 # optimizer.zero_grad()    
             
-            else:
-                print('Skipping dataset', i, 'with only one class')
+                else:
+                    print('Skipping dataset', i, 'with only one class')
             
         accumulator /= len(support_dataset)
         wandb.log({"average_loss": accumulator})

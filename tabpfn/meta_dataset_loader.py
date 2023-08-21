@@ -143,9 +143,13 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
         
         for i in range(0, dataset_length, batch_size):
             if (dataset_length-i) > batch_size:
-                support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size],  'id' : dataset['id']})
-                query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size], 'id' : dataset['id']})
-                
+                s_y = np.unique(targets[i:i+batch_size])
+                q_y = np.unique(targets[i+batch_size: i +2*batch_size])
+                if np.all(np.isin(s_y, q_y)):
+                    support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size],  'id' : dataset['id']})
+                    query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size], 'id' : dataset['id']})
+                else:
+                    print('skipped this batch')
     meta_dataset_indices = np.arange(len(support_meta_dataset))
     rng.shuffle(meta_dataset_indices)
     return np.array(support_meta_dataset)[meta_dataset_indices], np.array(query_meta_dataset)[meta_dataset_indices]

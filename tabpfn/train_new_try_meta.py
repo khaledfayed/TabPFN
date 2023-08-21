@@ -130,7 +130,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                 
                 accumulator += loss.item()
-                print('Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                 did = support_dataset[i]['id']
                 wandb.log({f"loss_{did}": loss.item()})
                 

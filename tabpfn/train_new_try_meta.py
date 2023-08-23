@@ -154,6 +154,17 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         loss.backward()
                     else:
                         print('skip')
+                        
+                        print(torch.unique(label))
+                        print(torch.unique(out))
+                        
+                        losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                        losses = losses.view(*output.shape[0:2])
+                        
+                        loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+                        
+                        print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                        accumulator += loss.item()
                     
                     if i % aggregate_k_gradients == aggregate_k_gradients - 1:
                         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)

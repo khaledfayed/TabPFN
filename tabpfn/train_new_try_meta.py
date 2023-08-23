@@ -131,6 +131,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     if torch.all(torch.isin(out, label)):
                         print('x_full nan', torch.isnan(X_full).any())
                         print('output nan', torch.isnan(output).any())
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                         
                         
                         losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
@@ -156,20 +157,20 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         print(torch.unique(out))
                     
                     if i % aggregate_k_gradients == aggregate_k_gradients - 1:
-                    #     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-                    #     try:
-                    #         optimizer.step()
-                    #         with torch.no_grad():
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                        try:
+                            optimizer.step()
+                            with torch.no_grad():
 
-                        accuracy = evaluate_classifier2(classifier, test_datasets)
-                    #             wandb.log({ "accuracy": accuracy})
+                                accuracy = evaluate_classifier2(classifier, test_datasets)
+                                wandb.log({ "accuracy": accuracy})
 
-                    #     except:
-                    #         print("Invalid optimization step encountered")
+                        except:
+                            print("Invalid optimization step encountered")
                         
-                    #     optimizer.zero_grad()
-                    optimizer.step()
-                    optimizer.zero_grad()    
+                        optimizer.zero_grad()
+                # optimizer.step()
+                # optimizer.zero_grad()    
             
                 else:
                     print('Skipping dataset', i, 'with only one class')

@@ -141,15 +141,18 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         
                         # print('Nan share:', nan_share)
                         loss = criterion2(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
-                        accumulator += loss.item()
-                        
-                        did = support_dataset[i]['id']
-                        wandb.log({f"loss_{did}": loss.item()})
-                        
-                        loss = loss / aggregate_k_gradients
-                        
-                        loss.backward()
+                        if torch.isnan(loss):
+                            print('Loss is nan')
+                        else:
+                            print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                            accumulator += loss.item()
+                            
+                            did = support_dataset[i]['id']
+                            wandb.log({f"loss_{did}": loss.item()})
+                            
+                            loss = loss / aggregate_k_gradients
+                            
+                            loss.backward()
                     else:
                         print('skip')
                         

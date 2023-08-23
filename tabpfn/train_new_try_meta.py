@@ -129,8 +129,12 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     # output = torch.nn.functional.softmax(output, dim=-1)
                     label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
                     if torch.all(torch.isin(out, label)):
+                        print('x_full nan', torch.isnan(X_full).any())
+                        print('output nan', torch.isnan(output).any())
+                        
                         
                         losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                        print('losses nan', torch.isnan(losses).any())
                         losses = losses.view(*output.shape[0:2])
                         
                         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)

@@ -128,33 +128,23 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                     # output = torch.nn.functional.softmax(output, dim=-1)
                     label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
-                    if torch.all(torch.isin(out, label)):
-                        print('x_full nan', torch.isnan(X_full).any())
-                        print('output nan', torch.isnan(output).any())
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                         
                         
-                        losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        print('losses nan', torch.isnan(losses).any())
-                        losses = losses.view(*output.shape[0:2])
-                        
-                        loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
-                        
-                        print('Nan share:', nan_share)
-                        print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
-                        accumulator += loss.item()
-                        
-                        did = support_dataset[i]['id']
-                        wandb.log({f"loss_{did}": loss.item()})
-                        
-                        loss = loss / aggregate_k_gradients
-                        
-                        loss.backward()
-                    else:
-                        print('skip')
-                        
-                        print(torch.unique(label))
-                        print(torch.unique(out))
+                    losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                    losses = losses.view(*output.shape[0:2])
+                    
+                    loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+                    
+                    print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                    accumulator += loss.item()
+                    
+                    did = support_dataset[i]['id']
+                    wandb.log({f"loss_{did}": loss.item()})
+                    
+                    loss = loss / aggregate_k_gradients
+                    
+                    loss.backward()
                     
                     if i % aggregate_k_gradients == aggregate_k_gradients - 1:
                         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)

@@ -82,7 +82,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     model = classifier.model[2]
     config = classifier.c
     criterion = model.criterion
-    n_out = criterion.weight.shape[0]
+    criterion2 = nn.CrossEntropyLoss()
     aggregate_k_gradients = config['aggregate_k_gradients']
     
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -129,14 +129,18 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     # output = torch.nn.functional.softmax(output, dim=-1)
                     label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
                     if torch.all(torch.isin(out, label)):
+    
                         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                         
                         
-                        losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        losses = losses.view(*output.shape[0:2])
+                        # losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                        # print('losses nan', torch.isnan(losses).any())
+                        # losses = losses.view(*output.shape[0:2])
                         
-                        loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+                        # loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                         
+                        # print('Nan share:', nan_share)
+                        loss = criterion2(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
                         print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                         accumulator += loss.item()
                         

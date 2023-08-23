@@ -135,6 +135,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         
                         loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                         
+                        print('Nan share:', nan_share)
                         print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                         accumulator += loss.item()
                         

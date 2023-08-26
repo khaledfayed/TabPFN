@@ -62,11 +62,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     "epochs": epochs,
     })
     
-    
-
-    # train_dids = [11, 23, 28, 30, 37, 44, 46, 50, 60, 181, 182, 311, 333, 334, 335, 1547, 1049, 1069, 4538, 1552, 1050, 799, 1056, 715, 725, 728, 735, 737, 740, 752, 772, 1068, 803, 807, 816, 819, 833, 837, 847, 1507, 871, 903, 923, 934, 1466, 1475, 1487, 1494, 761, 1496, 1497, 1504, 375, 377, 458, 469, 1063, 1462, 1480, 1510, 40496, 717, 750, 770, 825, 826, 841, 884, 886, 920, 936, 937, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40704, 40705, 40706, 40983, 40994, 40982, 40498, 40677, 40691, 40900, 1528, 1529, 1530, 1535, 1538, 1541, 1542, 1549, 1553, 42193]
-
-    train_dids = [23, 46, 50, 333, 334, 335, 1552, 923, 934, 469, 1480, 825, 826, 947, 949, 950, 951, 40646, 40647, 40648, 40649, 40650, 40680, 40693, 40701, 40705, 40706, 40677, 1549, 1553, 42193]
     test_dids = [1049]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
@@ -82,7 +77,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     model = classifier.model[2]
     config = classifier.c
     criterion = model.criterion
-    criterion2 = nn.CrossEntropyLoss()
     aggregate_k_gradients = config['aggregate_k_gradients']
     
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -103,86 +97,65 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         support_dataset, query_dataset = meta_dataset_loader3(datasets)
         
         for i in range(len(support_dataset)):
-            
-            with autocast(enabled=True):
-    
-                X_full = np.concatenate([support_dataset[i]['x'], query_dataset[i]['x']], axis=0)
-                X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=False).float().unsqueeze(1)
-                y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
-                y_full = torch.tensor(support_dataset[i]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
-                eval_pos = support_dataset[i]['x'].shape[0]
-                num_classes = len(torch.unique(y_full))
-                num_classes_query = len(np.unique(query_dataset[i]['y']))
                 
-                if num_classes > 1 and num_classes_query <= num_classes:
-                    X_full = preprocess_input(X_full, y_full, eval_pos)
-                    X_full.requires_grad=True
-                    # print(X_full[0])
-                    X_full = torch.cat(
-                            [X_full,
-                            torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
+            X_full = np.concatenate([support_dataset[i]['x'], query_dataset[i]['x']], axis=0)
+            X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=False).float().unsqueeze(1)
+            y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
+            y_full = torch.tensor(support_dataset[i]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
+            eval_pos = support_dataset[i]['x'].shape[0]
+            num_classes = len(torch.unique(y_full))
+            num_classes_query = len(np.unique(query_dataset[i]['y']))
+                
+            if num_classes > 1 and num_classes_query <= num_classes:
+                
+                X_full = preprocess_input(X_full, y_full, eval_pos)
+                X_full.requires_grad=True
+                X_full = torch.cat(
+                        [X_full,
+                        torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
+                
+                criterion.weight=torch.ones(num_classes)
+                
+                model.to(device)
+                
+                
+                output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
+                # output = torch.nn.functional.softmax(output, dim=-1)
+                label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
                     
-                    criterion.weight=torch.ones(num_classes)
+                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                losses = losses.view(*output.shape[0:2])
+                
+                loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
+                
+                print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                accumulator += loss.item()
                     
-                    model.to(device)
-                    
-                    print('in:',torch.isnan(X_full).any())
-                    
-                    output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
-                    # output = torch.nn.functional.softmax(output, dim=-1)
-                    print('out:',torch.isnan(output).any())
-                    label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
-                    if torch.all(torch.isin(out, label)):
-    
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-                        
-                        
-                        # losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        # print('losses nan', torch.isnan(losses).any())
-                        # losses = losses.view(*output.shape[0:2])
-                        
-                        # loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
-                        
-                        # print('Nan share:', nan_share)
-                        # print(output < 0)
-                        loss = criterion2(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        # print(loss < 0)
-                        if torch.isnan(loss):
-                            print('Loss is nan')
-                        else:
-                            print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
-                            accumulator += loss.item()
+                did = support_dataset[i]['id']
+                wandb.log({f"loss_{did}": loss.item()})
+                
+                loss = loss / aggregate_k_gradients
+                
+                loss.backward()
+                
+                if i % aggregate_k_gradients == aggregate_k_gradients - 1:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                    try:
+                        optimizer.step()
+                        with torch.no_grad():
                             
-                            did = support_dataset[i]['id']
-                            wandb.log({f"loss_{did}": loss.item()})
-                            
-                            loss = loss / aggregate_k_gradients
-                            
-                            loss.backward()
-                    else:
-                        print('skip')
-                        
-                        print(torch.unique(label))
-                        print(torch.unique(out))
-                    
-                    if i % aggregate_k_gradients == aggregate_k_gradients - 1:
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
-                        try:
-                            optimizer.step()
-                            with torch.no_grad():
+                            accuracy = evaluate_classifier2(classifier, test_datasets)
+                            wandb.log({ "accuracy": accuracy})
 
-                                accuracy = evaluate_classifier2(classifier, test_datasets)
-                                wandb.log({ "accuracy": accuracy})
-
-                        except:
-                            print("Invalid optimization step encountered")
-                        
-                        optimizer.zero_grad()
+                    except:
+                        print("Invalid optimization step encountered")
+                    
+                    optimizer.zero_grad()
                 # optimizer.step()
                 # optimizer.zero_grad()    
             
-                else:
-                    print('Skipping dataset', i, 'with only one class')
+            else:
+                print('Skipping dataset', i, 'with only one class')
             
         accumulator /= len(support_dataset)
 

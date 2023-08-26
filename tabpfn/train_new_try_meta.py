@@ -89,9 +89,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     print('Start training')
     if 1049 in auto_ml_dids: print('1049 in auto_ml_dids')
     if 1050 in auto_ml_dids: print('1050 in auto_ml_dids')
-    with torch.no_grad():
-        accuracy = evaluate_classifier2(classifier, test_datasets)
-        wandb.log({ "accuracy": accuracy})
+    # with torch.no_grad():
+    #     accuracy = evaluate_classifier2(classifier, test_datasets)
+    #     wandb.log({ "accuracy": accuracy})
     
     model.train()
         

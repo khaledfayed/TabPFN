@@ -125,6 +125,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     
                     model.to(device)
                     
+                    print(torch.isnan(X_full).any())
+                    
                     output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                     output = torch.nn.functional.softmax(output, dim=-1)
                     label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
@@ -140,9 +142,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         # loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                         
                         # print('Nan share:', nan_share)
-                        print(output < 0)
+                        # print(output < 0)
                         loss = criterion2(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
-                        print(loss < 0)
+                        # print(loss < 0)
                         if torch.isnan(loss):
                             print('Loss is nan')
                         else:

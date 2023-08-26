@@ -107,7 +107,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             with autocast(enabled=True):
     
                 X_full = np.concatenate([support_dataset[i]['x'], query_dataset[i]['x']], axis=0)
-                X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
+                X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=False).float().unsqueeze(1)
                 y_full = np.concatenate([support_dataset[0]['y'], np.zeros_like(query_dataset[0]['x'][:, 0])], axis=0)
                 y_full = torch.tensor(support_dataset[i]['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
                 eval_pos = support_dataset[i]['x'].shape[0]
@@ -116,6 +116,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 
                 if num_classes > 1 and num_classes_query <= num_classes:
                     X_full = preprocess_input(X_full, y_full, eval_pos)
+                    X_full.requires_grad=True
                     # print(X_full[0])
                     X_full = torch.cat(
                             [X_full,

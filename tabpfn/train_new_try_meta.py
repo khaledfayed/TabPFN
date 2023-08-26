@@ -69,6 +69,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)
+    
+    test_datasets2 = load_OHE_dataset([23], shuffle=False, one_hot_encode=False)
 
     
     #training setup
@@ -85,6 +87,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     print('Start training')
+    if 1049 in auto_ml_dids: print('1049 in auto_ml_dids')
+    if 1050 in auto_ml_dids: print('1050 in auto_ml_dids')
     with torch.no_grad():
         accuracy = evaluate_classifier2(classifier, test_datasets)
         wandb.log({ "accuracy": accuracy})
@@ -128,7 +132,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                 
-                print(support_dataset[i]['id'],'Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
+                print('Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                 accumulator += loss.item()
                     
                 did = support_dataset[i]['id']
@@ -142,10 +146,10 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
-                        with torch.no_grad():
+                        # with torch.no_grad():
                             
-                            accuracy = evaluate_classifier2(classifier, test_datasets)
-                            wandb.log({ "accuracy": accuracy})
+                        #     accuracy = evaluate_classifier2(classifier, test_datasets)
+                        #     wandb.log({ "accuracy": accuracy})
 
                     except:
                         print("Invalid optimization step encountered")
@@ -160,6 +164,13 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator /= len(support_dataset)
 
         wandb.log({"average_loss": accumulator})
+        
+        if e  == 10:
+        
+            with torch.no_grad():
+                                
+                accuracy = evaluate_classifier2(classifier, test_datasets)
+        
         # scheduler.step()
         # print(scheduler.get_last_lr())
         # print()

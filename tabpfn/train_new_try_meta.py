@@ -126,7 +126,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     model.to(device)
                     
                     output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
-                    # output = torch.nn.functional.softmax(output, dim=-1)
+                    output = torch.nn.functional.softmax(output, dim=-1)
                     label, out = torch.from_numpy(query_dataset[i]['y']).long().flatten().to(device), torch.argmax(output.reshape(-1, num_classes), axis=1)
                     if torch.all(torch.isin(out, label)):
     

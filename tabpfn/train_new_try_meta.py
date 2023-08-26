@@ -140,7 +140,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         # loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                         
                         # print('Nan share:', nan_share)
+                        print(output < 0)
                         loss = criterion2(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                        print(loss < 0)
                         if torch.isnan(loss):
                             print('Loss is nan')
                         else:

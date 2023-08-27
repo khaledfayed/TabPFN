@@ -134,7 +134,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 did = support_dataset[i]['id']
                 wandb.log({f"loss_{did}": loss.item()})
                 
-                loss = loss / aggregate_k_gradients
+                # loss = loss / aggregate_k_gradients
                 
                 loss.backward()
                 

@@ -62,7 +62,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     "epochs": epochs,
     })
     
-    test_dids = [1049]
+    test_dids = [31]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
     datasets = load_OHE_dataset([1049], one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
@@ -150,13 +150,13 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 #     except:
                 #         print("Invalid optimization step encountered")
                     
-                optimizer.zero_grad()
+                    # optimizer.zero_grad()
                 with torch.no_grad():
                     accuracy = evaluate_classifier2(classifier, test_datasets)
                 wandb.log({ "accuracy": accuracy})
 
-                # optimizer.step()
-                # optimizer.zero_grad()    
+                optimizer.step()
+                optimizer.zero_grad()    
             
             else:
                 print('Skipping dataset', i, 'with only one class')

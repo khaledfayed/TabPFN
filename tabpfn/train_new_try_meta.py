@@ -65,7 +65,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     test_dids = [1049]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
     
-    datasets = load_OHE_dataset([31], one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+    datasets = load_OHE_dataset([1049], one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
     
     
     test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)

@@ -26,24 +26,71 @@ def zero_pad_dataset_features(transformed_data):
     
     return padded_data
 
-def drop_dataset_features(dataframe, num_features_to_drop=0):
-    modified_df = dataframe.copy()
+def log_scale_features(data, epsilon=1e-10):
+    data_with_epsilon = data + epsilon
+    
+    return np.log(data_with_epsilon)
 
-    # Determine the number of features in the DataFrame
-    num_features = len(dataframe.columns)
+def exponential_scale_features(data, power=2):
+    
+    return np.power(data, power)
 
-    # Ensure the number of features to drop is not greater than the total number of features
-    num_features_to_drop = min(num_features_to_drop, num_features)
 
-    # Generate a list of random feature indices to drop
-    features_to_drop = random.sample(range(num_features), num_features_to_drop)
+def drop_dataset_features(input_array):
+    
+    num_features = input_array.shape[1]
+    
+    min_columns_to_drop = int(0.10 * num_features)
+    max_columns_to_drop = int(0.20 * num_features)
+    num_columns_to_drop = np.random.randint(min_columns_to_drop, max_columns_to_drop + 1)
+    
+    columns_to_drop_indices = np.random.choice(num_features, num_columns_to_drop, replace=False)
+    
+    result_array = np.delete(input_array, columns_to_drop_indices, axis=1)
+    
+    return result_array
 
-    # Drop the selected features from the DataFrame
-    modified_df.drop(modified_df.columns[features_to_drop], axis=1, inplace=True)
+def relabel_augmentation(features, labels, num_categorical_features):
+    # Randomly select a feature to be used as the new label
+    num_features = features.shape[1]
+    new_label_index = np.random.randint(0, num_features)
 
-    return modified_df
+    # Extract the selected feature as the new label
+    new_labels = features[:, new_label_index]
+    
+    features = np.delete(features, new_label_index, axis=1)
 
-def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffle=True, drop_features=False):
+    # Create a new feature using the old label
+    old_label = labels.reshape(-1, 1)
+
+    # Add the old label as a new feature
+    augmented_features = np.hstack((features, old_label))
+    
+    if new_label_index > num_categorical_features:
+        median = np.median(new_labels)
+        min_value = np.min(new_labels)
+        max_value = np.max(new_labels)
+        
+        value_range = max_value - min_value
+        class_width = value_range / np.unique(old_label).shape[0]-1
+        
+        new_labels = ((new_labels - min_value) / class_width).astype(int)
+
+    # Encode the new labels using LabelEncoder
+    label_encoder = LabelEncoder()
+    new_labels_encoded = label_encoder.fit_transform(new_labels)
+
+    return augmented_features, new_labels_encoded
+
+augmentation_dict = {
+    'drop_features': drop_dataset_features,
+    'shuffle_features': shuffle_dataset_features,
+    'log_scaling': log_scale_features,
+    'exp_scaling': exponential_scale_features,
+    'relabel': relabel_augmentation
+}
+
+def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffle=True, drop_features=False, augmentation_config=[]):
     encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
     label_encoder = LabelEncoder()
 
@@ -55,6 +102,8 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffl
         X, y, categorical_features, attribute_names = dataset.get_data(
             target=dataset.default_target_attribute,
         )
+        
+        num_categorical_features = np.sum(categorical_features)
                 
         df = pd.DataFrame(X, columns=attribute_names)
         
@@ -81,8 +130,17 @@ def load_OHE_dataset(dids, num_augmented_datasets=0, one_hot_encode=True, shuffl
         
         transformed_data = pipeline.fit_transform(df)
         transformed_targets = label_encoder.fit_transform(y)
+        
+        for i, (augmentation, amount) in enumerate(augmentation_config):
+            augmentation_function = augmentation_dict[augmentation]
+            for _ in range(amount):
+                if augmentation == 'relabel':
+                    relabelled_data, relabelled_targets = augmentation_function(transformed_data, transformed_targets, num_categorical_features)
+                    encoded_datasets.append({'data': relabelled_data, 'target': relabelled_targets, 'id': dataset.id, 'augmentation': augmentation })
+                else:
+                    encoded_datasets.append({'data': augmentation_function(transformed_data), 'target': transformed_targets, 'id': dataset.id, 'augmentation': augmentation })
                     
-        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else transformed_data, 'target': transformed_targets, 'id': dataset.id})
+        encoded_datasets.append({'data': shuffle_dataset_features(transformed_data) if shuffle else transformed_data, 'target': transformed_targets, 'id': dataset.id, 'augmentation': 'none'})
         
         for i in range(num_augmented_datasets):
             encoded_datasets.append({'data': shuffle_dataset_features(transformed_data), 'target': transformed_targets, 'id': f"dataset.id_augmented_{i}"})
@@ -290,7 +348,9 @@ def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, s
     
 
 def main():
-    datasets = load_OHE_dataset([31])
+    config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
+    datasets = load_OHE_dataset([31], augmentation_config=config, one_hot_encode=False)
+    pass
     # support, query = meta_dataset_loader3(datasets)
     
     # print(len(support), len(query))

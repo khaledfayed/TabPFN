@@ -118,7 +118,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 
                 model.to(device)
                 
-                
+                label_encoder = LabelEncoder()
                 
                 output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
                 #predicted class is the one with the highest probability
@@ -127,7 +127,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 print('unique output', torch.unique(torch.argmax(output, dim=-1)))
                 print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                     
-                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
+                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_dataset[i]['y'])).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from scripts.transformer_prediction_interface import TabPFNClassifier
+from scripts.model_builder import save_model
 from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, split_datasets
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
@@ -50,17 +51,17 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weight_decay=0.0):
 
     
-    wandb.init(
-    # set the wandb project where this run will be logged
-    project="thesis",
-    name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
-    # track hyperparameters and run metadata
-    config={
-    "learning_rate": lr,
-    "architecture": "TabPFN",
-    "dataset": "meta-dataset",
-    "epochs": epochs,
-    })
+    if device != 'cpu': wandb.init(
+        # set the wandb project where this run will be logged
+        project="thesis",
+        name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
+        # track hyperparameters and run metadata
+        config={
+        "learning_rate": lr,
+        "architecture": "TabPFN",
+        "dataset": "meta-dataset",
+        "epochs": epochs,
+        })
     
     test_dids = [1049]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
@@ -82,12 +83,14 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     # scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
 
+    # checkpoint = f'prior_diff_real_checkpointtest_n_0_epoch_100.cpkt'
+    # save_model(model, 'tabpfn/models_diff/', checkpoint, config)
     
     
     print('Start training')
     with torch.no_grad():
         accuracy = evaluate_classifier2(classifier, test_datasets)
-        wandb.log({ "accuracy": accuracy})
+        if device != 'cpu': wandb.log({ "accuracy": accuracy})
     
     model.train()
         
@@ -136,7 +139,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 accumulator += loss.item()
                     
                 did = support_dataset[i]['id']
-                wandb.log({f"loss_{did}": loss.item()})
+                if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
                 
                 loss = loss / aggregate_k_gradients
                 
@@ -149,7 +152,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         with torch.no_grad():
                             
                             accuracy = evaluate_classifier2(classifier, test_datasets)
-                            wandb.log({ "accuracy": accuracy})
+                            if device != 'cpu': wandb.log({ "accuracy": accuracy})
 
                     except:
                         print("Invalid optimization step encountered")
@@ -163,7 +166,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             
         accumulator /= len(support_dataset)
 
-        wandb.log({"average_loss": accumulator})
+        if device != 'cpu': wandb.log({"average_loss": accumulator})
         
         # scheduler.step()
         # print(scheduler.get_last_lr())

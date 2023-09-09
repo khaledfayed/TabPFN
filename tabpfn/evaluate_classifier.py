@@ -3,6 +3,7 @@ from meta_dataset_loader import load_meta_data_loader, split_datasets, load_OHE_
 from sklearn.metrics import accuracy_score
 import time
 import torch
+import wandb
 
 def evaluate_classifier(classifier, dids, train_data=0.7):
     
@@ -21,7 +22,7 @@ def evaluate_classifier(classifier, dids, train_data=0.7):
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
     return accuracy
 
-def evaluate_classifier2(classifier, datasets, train_data=0.7):
+def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
     
     
     for dataset in datasets:
@@ -33,6 +34,8 @@ def evaluate_classifier2(classifier, datasets, train_data=0.7):
         y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
         accuracy = accuracy_score(dataset['target'][512:], y_eval)
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
+        wandb_name = f'accuracy_{dataset["id"]}'
+        if log: wandb.log({ wandb_name: accuracy})
     return accuracy
         
 def main():

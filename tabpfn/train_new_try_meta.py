@@ -123,10 +123,12 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 #predicted class is the one with the highest probability
                 # output = torch.nn.functional.softmax(output, dim=-1)
                 
-                print('unique output', torch.unique(torch.argmax(output, dim=-1)))
-                print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
+                # print('unique output', torch.unique(torch.argmax(output, dim=-1)))
+                # print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
+                
+                print('output shape', output.shape, 'y shape', torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten().shape, 'y_full shape', y_full.shape, 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                     
-                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_dataset[i]['y'])).to(device).long().flatten())
+                losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)

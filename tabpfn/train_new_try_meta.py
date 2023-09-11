@@ -20,7 +20,7 @@ normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
 max_features = 100
-warmup_epochs=100
+warmup_epochs=20
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def preprocess_input(eval_xs, eval_ys, eval_position):
         import warnings

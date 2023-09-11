@@ -11,7 +11,7 @@ from evaluate_classifier import evaluate_classifier2, open_cc_dids, auto_ml_dids
 import wandb
 
 import utils as utils
-from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup
+from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup, get_restarting_cosine_schedule_with_warmup
 from utils import NOP, normalize_by_used_features_f
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
 from torch.cuda.amp import autocast
@@ -81,7 +81,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     aggregate_k_gradients = config['aggregate_k_gradients']
     
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
+    # scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
+    scheduler = get_restarting_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100, epochs if epochs is not None else 100)
     
     
     print('Start training')
@@ -126,7 +127,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 # print('unique output', torch.unique(torch.argmax(output, dim=-1)))
                 # print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                 
-                print('output shape', output.shape, 'y_full unique', torch.unique(y_full), 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
+                # print('output shape', output.shape, 'y_full unique', torch.unique(y_full), 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                     
                 losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_dataset[i]['y'])).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])

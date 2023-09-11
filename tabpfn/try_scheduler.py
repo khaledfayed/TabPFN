@@ -167,7 +167,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         
         scheduler.step()
-        print(scheduler.get_last_lr())
+        wandb.log({"lr":  optimizer.param_groups[0]['lr'], "weight decay": optimizer.param_groups[0]['weight_decay']})
+        
         # print()
         
     

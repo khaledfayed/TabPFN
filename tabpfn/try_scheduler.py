@@ -126,7 +126,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 # print('unique output', torch.unique(torch.argmax(output, dim=-1)))
                 # print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                 
-                print('output shape', output.shape, 'y_full unique', torch.unique(y_full), 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
+                # print('output shape', output.shape, 'y_full unique', torch.unique(y_full), 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                     
                 losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_dataset[i]['y'])).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])
@@ -165,13 +165,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
         if device != 'cpu': wandb.log({"average_loss": accumulator})
         
-        if e % 10 == 0:
-            model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
-            checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
-            save_model(model, 'models_diff/', checkpoint, config)
         
-        # scheduler.step()
-        # print(scheduler.get_last_lr())
+        scheduler.step()
+        print(scheduler.get_last_lr())
         # print()
         
     

@@ -11,6 +11,47 @@ import random
 
 from numpy.random import default_rng
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+
+class TabularModel(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(TabularModel, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        # self.relu = nn.ReLU()
+        # self.fc2 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        # x = self.relu(x)
+        # x = self.fc2(x)
+        return x
+
+# Assume you have your tabular data loaded into X and y
+
+def generate_datasets(datasets, device='cpu'):
+
+    # Instantiate the model
+
+    model = TabularModel(1, 1)
+    
+    for i,dataset in enumerate(datasets):
+        
+        delattr(model, 'fc1')
+        model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
+        model.fc1.reset_parameters()
+        model.to(device)
+        
+        X = torch.tensor(dataset['data'], dtype=torch.float32)
+        X.to(device)
+        
+        output = model(X)
+        
+        datasets[i]['data'] = output.detach().cpu().numpy()
+        
 def shuffle_dataset_features(transformed_data):
     _, num_cols = transformed_data.shape
     augmented_data = transformed_data.copy()
@@ -348,8 +389,17 @@ def meta_dataset_loader(datasets,  num_samples_per_class = 2, one_batch=False, s
     
 
 def main():
+    auto_ml_dids_train = [   23,    28,    30,    44,    46,    60,   181,   182,   375,
+         725,   728,   735,   737,   752,   761,   772,   803,   807,
+         816,   819,   833,   847,   871,   923,  1049,  1050,  1056,
+        1069,  1462,  1466,  1475,  1487,  1496,  1497,  1504,  1507,
+        1528,  1529,  1530,  1535,  1538,  1541,  4538, 40498, 40646,
+       40647, 40648, 40649, 40650, 40677, 40680, 40691, 40701, 40704,
+       40900, 40982, 40983, 42193]
+    
     config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
-    datasets = load_OHE_dataset([31], augmentation_config=config, one_hot_encode=False)
+    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
+    generate_datasets(datasets)
     pass
     # support, query = meta_dataset_loader3(datasets)
     

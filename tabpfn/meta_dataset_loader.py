@@ -35,6 +35,7 @@ class TabularModel(nn.Module):
 def generate_datasets(datasets, device='cpu'):
 
     # Instantiate the model
+    print(device)
 
     model = TabularModel(1, 1)
     

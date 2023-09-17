@@ -94,7 +94,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     for e in range(epochs):
         
         accumulator = 0
-        generate_datasets(datasets, device)
+        generate_datasets(datasets, device=device)
         support_dataset, query_dataset = meta_dataset_loader3(datasets)
         
         for i in range(len(support_dataset)):

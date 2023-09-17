@@ -37,17 +37,16 @@ def generate_datasets(datasets, device='cpu'):
     # Instantiate the model
     print(device)
 
-    model = TabularModel(1, 1)
+    model = TabularModel(1, 1).to(device)
     
     for i,dataset in enumerate(datasets):
         
         delattr(model, 'fc1')
         model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
         model.fc1.reset_parameters()
-        model.to(device)
+        model.fc1.to(device)
         
-        X = torch.tensor(dataset['data'], dtype=torch.float32)
-        X.to(device)
+        X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)
         
         output = model(X)
         

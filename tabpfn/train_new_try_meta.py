@@ -69,10 +69,11 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False, augmentation_config=augmentation_config)
     
     
-    test_datasets = load_OHE_dataset(test_dids, shuffle=False, one_hot_encode=False)
+    test_datasets = load_OHE_dataset(auto_ml_dids_val, shuffle=False, one_hot_encode=False)
     
     
     #training setup
+    best_accuracy_so_far = 0
     
     
     model = classifier.model[2]
@@ -153,7 +154,14 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
                         with torch.no_grad():
                             
-                            evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+                            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+                            
+                            if accuracy > best_accuracy_so_far:
+                                criterion.weight=torch.ones(10)
+                                best_accuracy_so_far = accuracy
+                                model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
+                                checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
+                                save_model(model, 'models_diff/', checkpoint, config)
 
                     except:
                         print("Invalid optimization step encountered")
@@ -169,10 +177,10 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
         if device != 'cpu': wandb.log({"average_loss": accumulator})
         
-        if e % 10 == 0:
-            model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
-            checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
-            save_model(model, 'models_diff/', checkpoint, config)
+        # if e % 10 == 0:
+        #     model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
+        #     checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
+        #     save_model(model, 'models_diff/', checkpoint, config)
         
         # scheduler.step()
         # print(scheduler.get_last_lr())

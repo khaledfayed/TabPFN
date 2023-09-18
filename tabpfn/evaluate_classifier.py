@@ -24,6 +24,8 @@ def evaluate_classifier(classifier, dids, train_data=0.7):
 
 def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
     
+    logs = {}
+    
     
     for dataset in datasets:
         
@@ -35,14 +37,18 @@ def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
         accuracy = accuracy_score(dataset['target'][512:], y_eval)
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
         wandb_name = f'accuracy_{dataset["id"]}'
-        if log: wandb.log({ wandb_name: accuracy})
-    return accuracy
+        logs[wandb_name] = accuracy
+    
+    average_accuracy = sum(logs.values())/len(logs.values())
+    logs['average_accuracy'] = average_accuracy
+    if log: wandb.log(logs)
+    return average_accuracy
         
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
-    data = load_OHE_dataset([1049], one_hot_encode=False)
-    evaluate_classifier2(classifier, data)
+    data = load_OHE_dataset([799], one_hot_encode=False)
+    evaluate_classifier2(classifier, data, False)
     pass
 
 if __name__ == "__main__":

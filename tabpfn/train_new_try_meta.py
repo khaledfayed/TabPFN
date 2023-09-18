@@ -16,6 +16,8 @@ from utils import NOP, normalize_by_used_features_f
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
 from torch.cuda.amp import autocast
 
+import argparse
+
 normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
@@ -50,7 +52,7 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
 def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weight_decay=0.0, augmentation_config = []):
 
-    
+    print(weight_decay, lr, wandb_name, epochs)
     if device != 'cpu': wandb.init(
         # set the wandb project where this run will be logged
         project="thesis",
@@ -188,9 +190,14 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         # print(scheduler.get_last_lr())
         # print()
         
-    
-def main():
-    train()
 
 if __name__ == "__main__":
-    main()    
+    parser = argparse.ArgumentParser(description="A script with command-line arguments")
+    parser.add_argument("--epochs", type=int, help="The first argument (an integer)")
+    parser.add_argument("--lr", type=float, help="The first argument (an integer)")
+    parser.add_argument("--weight_decay", type=float, help="The first argument (an integer)")
+    parser.add_argument("--name", type=str, help="The first argument (an integer)")
+    args = parser.parse_args()
+
+    
+    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    

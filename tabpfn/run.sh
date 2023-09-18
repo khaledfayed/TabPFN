@@ -13,8 +13,16 @@
 #SBATCH --output logs/%x-%A-HelloCluster.out   # STDOUT  %x and %A will be replaced by the job name and job id, respectively. short: -o logs/%x-%A-job_name.out
 #SBATCH --error logs/%x-%A-HelloCluster.err    # STDERR  short: -e logs/%x-%A-job_name.out
 
+# CPU settings
+#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-core=1
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+
 # Define the amount of memory required per node
 #SBATCH --mem 8GB
+
+#SBATCH --gres=gpu:3
 
 echo "Workingdir: $PWD";
 echo "Started at $(date)";

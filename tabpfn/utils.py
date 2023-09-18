@@ -252,41 +252,41 @@ def print_on_master_only(is_master):
 
 def init_dist(device):
     #print('init dist')
-    if 'LOCAL_RANK' in os.environ:
-        # launched with torch.distributed.launch
-        rank = int(os.environ["LOCAL_RANK"])
-        print('torch.distributed.launch and my rank is', rank)
-        torch.cuda.set_device(rank)
-        os.environ['CUDA_VISIBLE_DEVICES'] = str(rank)
-        torch.distributed.init_process_group(backend="nccl", init_method="env://", timeout=datetime.timedelta(seconds=20),
-                                             world_size=torch.cuda.device_count(), rank=rank)
-        torch.distributed.barrier()
-        print_on_master_only(rank == 0)
-        print(f"Distributed training on {torch.cuda.device_count()} GPUs, this is rank {rank}, "
-              "only I can print, but when using print(..., force=True) it will print on all ranks.")
-        return True, rank, f'cuda:{rank}'
-    elif 'SLURM_PROCID' in os.environ and torch.cuda.device_count() > 1:
-        # this is for multi gpu when starting with submitit
-        assert device != 'cpu:0'
-        rank = int(os.environ['SLURM_PROCID'])
-        os.environ['MASTER_ADDR'] = 'localhost'
-        os.environ['MASTER_PORT'] = '12355'
-        torch.cuda.set_device(rank)
-        os.environ['CUDA_VISIBLE_DEVICES'] = str(rank)
-        print('distributed submitit launch and my rank is', rank)
-        torch.distributed.init_process_group(backend="nccl", init_method="env://", timeout=datetime.timedelta(seconds=20),
-                                             world_size=torch.cuda.device_count(), rank=rank)
-        torch.distributed.barrier()
-        print_on_master_only(rank == 0)
-        print(f"Distributed training on {torch.cuda.device_count()} GPUs, this is rank {rank}, "
-              "only I can print, but when using print(..., force=True) it will print on all ranks.")
+    # if 'LOCAL_RANK' in os.environ:
+    #     # launched with torch.distributed.launch
+    #     rank = int(os.environ["LOCAL_RANK"])
+    #     print('torch.distributed.launch and my rank is', rank)
+    #     torch.cuda.set_device(rank)
+    #     os.environ['CUDA_VISIBLE_DEVICES'] = str(rank)
+    #     torch.distributed.init_process_group(backend="nccl", init_method="env://", timeout=datetime.timedelta(seconds=20),
+    #                                          world_size=torch.cuda.device_count(), rank=rank)
+    #     torch.distributed.barrier()
+    #     print_on_master_only(rank == 0)
+    #     print(f"Distributed training on {torch.cuda.device_count()} GPUs, this is rank {rank}, "
+    #           "only I can print, but when using print(..., force=True) it will print on all ranks.")
+    #     return True, rank, f'cuda:{rank}'
+    # elif 'SLURM_PROCID' in os.environ and torch.cuda.device_count() > 1:
+    #     # this is for multi gpu when starting with submitit
+    #     assert device != 'cpu:0'
+    #     rank = int(os.environ['SLURM_PROCID'])
+    #     os.environ['MASTER_ADDR'] = 'localhost'
+    #     os.environ['MASTER_PORT'] = '12355'
+    #     torch.cuda.set_device(rank)
+    #     os.environ['CUDA_VISIBLE_DEVICES'] = str(rank)
+    #     print('distributed submitit launch and my rank is', rank)
+    #     torch.distributed.init_process_group(backend="nccl", init_method="env://", timeout=datetime.timedelta(seconds=20),
+    #                                          world_size=torch.cuda.device_count(), rank=rank)
+    #     torch.distributed.barrier()
+    #     print_on_master_only(rank == 0)
+    #     print(f"Distributed training on {torch.cuda.device_count()} GPUs, this is rank {rank}, "
+    #           "only I can print, but when using print(..., force=True) it will print on all ranks.")
 
-        return True, rank, f'cuda:{rank}'
-    else:
-        #print('Not using distributed')
-        # will not change any of the behavior of print, but allows putting the force=True in the print calls
-        print_on_master_only(True)
-        return False, 0, device
+    #     return True, rank, f'cuda:{rank}'
+    # else:
+    #     #print('Not using distributed')
+    #     # will not change any of the behavior of print, but allows putting the force=True in the print calls
+    #     print_on_master_only(True)
+    return False, 0, device
 
 # NOP function for python with statements (x = NOP(); with x:)
 class NOP():

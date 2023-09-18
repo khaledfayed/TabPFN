@@ -18,7 +18,9 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 import os
 
+openml.config.set_cache_directory(os.path.expanduser('./openml'))
 openml.config.cache_directory = os.path.expanduser('./openml')
+print(openml.config.get_cache_directory())
 
 class TabularModel(nn.Module):
     def __init__(self, input_size, hidden_size):

@@ -159,9 +159,11 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                             if accuracy > best_accuracy_so_far:
                                 criterion.weight=torch.ones(10)
                                 best_accuracy_so_far = accuracy
-                                model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
+                                model_save_name = f'{wandb_name}_best_lr_{lr}'
                                 checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
                                 save_model(model, 'models_diff/', checkpoint, config)
+                                log_save = f'{e}_{accuracy}'
+                                wandb.log({"saved_model": log_save})
 
                     except:
                         print("Invalid optimization step encountered")

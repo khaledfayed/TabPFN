@@ -1,0 +1,12 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>40646</oml:id>
+  <oml:name>GAMETES_Epistasis_2-Way_20atts_0.1H_EDM-1_1</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>GAMETES_Epistasis_2-Way_20atts_0.1H_EDM-1_1-pmlb</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+        <oml:upload_date>2017-04-06T12:09:45</oml:upload_date>
+    <oml:licence>public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/4965215/GAMETES_Epistasis_2-Way_20atts_0.1H_EDM-1_1.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset40646/dataset_40646.pq</oml:parquet_url>  <oml:file_id>4965215</oml:file_id>  <oml:default_target_attribute>class</oml:default_target_attribute>          <oml:tag>artificial</oml:tag>  <oml:visibility>public</oml:visibility>      <oml:minio_url>http://openml1.win.tue.nl/dataset40646/dataset_40646.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2018-10-04 07:09:13</oml:processing_date>      <oml:md5_checksum>f232b37710bcd514b8008ffee9604374</oml:md5_checksum>
+</oml:data_set_description>

@@ -1,0 +1,27 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>1056</oml:id>
+  <oml:name>mc1</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**: Mike Chapman, NASA  
+**Source**: [tera-PROMISE](http://openscience.us/repo/defect/mccabehalsted/mc1.html) - 2004  
+**Please cite**: Sayyad Shirabad, J. and Menzies, T.J. (2005) The PROMISE Repository of Software Engineering Databases. School of Information Technology and Engineering, University of Ottawa, Canada.  
+  
+**MC1 Software defect prediction**  
+One of the NASA Metrics Data Program defect data sets. The specific type of software is unknown. Data comes from McCabe and Halstead features extractors of source code.  These features were defined in the 70s in an attempt to objectively characterize code features that are associated with software quality.
+
+### Relevant papers  
+
+- Shepperd, M. and Qinbao Song and Zhongbin Sun and Mair, C. (2013)
+Data Quality: Some Comments on the NASA Software Defect Datasets, IEEE Transactions on Software Engineering, 39.
+
+- Tim Menzies and Justin S. Di Stefano (2004) How Good is Your Blind Spot Sampling Policy? 2004 IEEE Conference on High Assurance
+Software Engineering.
+
+- T. Menzies and J. DiStefano and A. Orrego and R. Chapman (2004) Assessing Predictors of Software Defects&quot;, Workshop on Predictive Software Models, Chicago</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator>Mike Chapman</oml:creator>     <oml:collection_date>2004</oml:collection_date>  <oml:upload_date>2014-10-06T23:57:25</oml:upload_date>
+  <oml:language>English</oml:language>  <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/53939/mc1.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset1056/dataset_1056.pq</oml:parquet_url>  <oml:file_id>53939</oml:file_id>  <oml:default_target_attribute>c</oml:default_target_attribute>        <oml:citation>Sayyad Shirabad, J. and Menzies, T.J. (2005) The PROMISE Repository of Software Engineering Databases. School of Information Technology and Engineering, University of Ottawa, Canada</oml:citation>  <oml:tag>mythbusting_1</oml:tag><oml:tag>PROMISE</oml:tag><oml:tag>study_1</oml:tag><oml:tag>study_15</oml:tag><oml:tag>study_20</oml:tag><oml:tag>study_41</oml:tag><oml:tag>study_52</oml:tag><oml:tag>study_7</oml:tag>  <oml:visibility>public</oml:visibility>  <oml:original_data_url>http://openscience.us/repo/defect/mccabehalsted/mc1.html</oml:original_data_url>  <oml:paper_url>https://ieeexplore.ieee.org/abstract/document/6464273</oml:paper_url>  <oml:minio_url>http://openml1.win.tue.nl/dataset1056/dataset_1056.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2020-11-20 20:20:51</oml:processing_date>      <oml:md5_checksum>139eb4f92bb7811f1c9e9fb19b3ba7f8</oml:md5_checksum>
+</oml:data_set_description>

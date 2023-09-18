@@ -1,0 +1,27 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>40900</oml:id>
+  <oml:name>Satellite</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**: Markus Goldstein  
+**Source**: [Dataverse](http://www.madm.eu/downloads https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OPQMVF)  
+**Please cite**:   
+
+The satellite dataset comprises of features extracted from satellite observations. In particular, each image was taken under four different light wavelength, two in visible light (green and red) and two infrared images. The task of the original dataset is to classify the image into the soil category of the observed region. 
+
+### Classes
+We defined the soil classes &amp;ldquo;red soil&amp;rdquo;, &amp;ldquo;gray soil&amp;rdquo;, &amp;ldquo;damp gray soil&amp;rdquo; and &amp;ldquo;very damp gray soil&amp;rdquo; as the normal class. From the semantically different classes &amp;ldquo;cotton crop&amp;rdquo; and &amp;ldquo;soil with vegetation stubble&amp;rdquo; anomalies are sampled. 
+
+After merging the original training and test set into a single dataset, the resulting dataset contains 5,025 normal instances as well as 75 randomly sampled anomalies (1.49%) with 36 dimensions 
+
+### Relevant Papers
+
+Goldstein, Markus, and Seiichi Uchida. A comparative evaluation of unsupervised anomaly detection algorithms for multivariate data.&amp;quot; PloS one 11.4 (2016): e0152173 
+
+This dataset is not the original dataset. The target variable 'Target' is relabeled into 'Normal' and 'Anomaly'</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator>Markus Goldstein</oml:creator>      <oml:upload_date>2017-09-22T17:23:34</oml:upload_date>
+    <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/16787463/Satellite.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset40900/dataset_40900.pq</oml:parquet_url>  <oml:file_id>16787463</oml:file_id>  <oml:default_target_attribute>Target</oml:default_target_attribute>            <oml:visibility>public</oml:visibility>  <oml:original_data_url>http://www.madm.eu/downloads https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OPQMVF</oml:original_data_url>    <oml:minio_url>http://openml1.win.tue.nl/dataset40900/dataset_40900.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2018-10-04 07:20:20</oml:processing_date>      <oml:md5_checksum>7a4e6eb8113b885d48b74fb2eb754570</oml:md5_checksum>
+</oml:data_set_description>

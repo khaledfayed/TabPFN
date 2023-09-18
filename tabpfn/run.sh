@@ -16,8 +16,6 @@
 # Define the amount of memory required per node
 #SBATCH --mem 8GB
 
-#SBATCH --gres=gpu:3
-
 echo "Workingdir: $PWD";
 echo "Started at $(date)";
 

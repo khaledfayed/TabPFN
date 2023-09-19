@@ -17,7 +17,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 import os
-openml.config.set_cache_directory(os.path.abspath('tabpfn/openml'))
+openml.config.set_cache_directory(os.path.abspath('openml'))
 print(openml.config.get_cache_directory())
 
 class TabularModel(nn.Module):

@@ -152,8 +152,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
-                        scheduler.step()
-                        if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
                         with torch.no_grad():
                             
                             accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
@@ -180,6 +178,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator /= len(support_dataset)
 
         if device != 'cpu': wandb.log({"average_loss": accumulator})
+        
+        scheduler.step()
+        if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
         # if e % 10 == 0:
         #     model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'

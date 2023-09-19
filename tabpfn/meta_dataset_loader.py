@@ -17,7 +17,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 import os
-
+openml.config.set_cache_directory(os.path.abspath('tabpfn/openml'))
 print(openml.config.get_cache_directory())
 
 class TabularModel(nn.Module):
@@ -400,9 +400,9 @@ def main():
        40647, 40648, 40649, 40650, 40677, 40680, 40691, 40701, 40704,
        40900, 40982, 40983, 42193]
     
-    config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
-    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    generate_datasets(datasets)
+    # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
+    # datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
+    # generate_datasets(datasets)
     pass
     # support, query = meta_dataset_loader3(datasets)
     

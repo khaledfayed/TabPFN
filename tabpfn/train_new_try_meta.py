@@ -84,7 +84,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     aggregate_k_gradients = config['aggregate_k_gradients']
     
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
+    # scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
     # scheduler = get_restarting_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100, epochs if epochs is not None else 100)
     
     
@@ -152,8 +152,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
-                        scheduler.step()
-                        if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
+                        # scheduler.step()
+                        # if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
                         with torch.no_grad():
                             
                             accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')

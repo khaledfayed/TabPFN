@@ -32,6 +32,39 @@ class TabularModel(nn.Module):
         # x = self.relu(x)
         # x = self.fc2(x)
         return x
+    
+class MyModel(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(MyModel, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)  # Example linear layer with bias
+        nn.init.normal_(self.fc1.weight, mean=0.0, std=0.01)  # Normal initialization with mean=0.0 and std=0.01
+        self.sig = nn.Sigmoid()
+
+    def forward(self, x):
+        x = self.fc1(x)
+        # x = self.sig(x)
+        # x = self.fc2(x)
+        return x
+
+def generate_datasets_gaussian(datasets, device='cpu'):
+    
+    # Instantiate the model
+
+    model = MyModel(1, 1).to(device)
+    
+    for i,dataset in enumerate(datasets):
+        
+        delattr(model, 'fc1')
+        model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
+        nn.init.normal_(model.fc1.weight, mean=0.0, std=0.01)
+        model.fc1.to(device)
+        
+        X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)
+        
+        output = model(X)
+        
+        datasets[i]['data'] = output.detach().cpu().numpy()
+
 
 # Assume you have your tabular data loaded into X and y
 
@@ -401,8 +434,12 @@ def main():
        40900, 40982, 40983, 42193]
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
-    # datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    # generate_datasets(datasets)
+    datasets = load_OHE_dataset([31], one_hot_encode=False)
+    print(datasets[0]['data'][0])
+    generate_datasets(datasets)
+    print(datasets[0]['data'][0])
+    generate_datasets_gaussian(datasets)
+    print(datasets[0]['data'][0])
     pass
     # support, query = meta_dataset_loader3(datasets)
     

@@ -95,12 +95,12 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     model.train()
     
-    for _, param in model.named_parameters():
-        param.requires_grad = False
+#     for _, param in model.named_parameters():
+#         param.requires_grad = False
 
-# Unfreeze the layers you want to train
-    for name, param in list(model.named_parameters())[-32:]:
-        param.requires_grad = True
+# # Unfreeze the layers you want to train
+#     for name, param in list(model.named_parameters())[-32:]:
+#         param.requires_grad = True
         
     for e in range(epochs):
         
@@ -210,8 +210,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('drop_features', 16)]
+    config = [('relabel', 4)]
 
 
     
-    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    
+    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay, augmentation_config=config)    

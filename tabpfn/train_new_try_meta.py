@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from scripts.transformer_prediction_interface import TabPFNClassifier
 from scripts.model_builder import save_model
-from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, generate_datasets
+from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, generate_datasets, augment_datasets
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
@@ -69,7 +69,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
         
-    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False, augmentation_config=augmentation_config)
+    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+
     
     
     test_datasets = load_OHE_dataset(auto_ml_dids_val, shuffle=False, one_hot_encode=False)
@@ -106,7 +107,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         accumulator = 0
         # generate_datasets(datasets, device=device)
-        support_dataset, query_dataset = meta_dataset_loader3(datasets)
+        cloned_datasets = datasets.copy()
+        augment_datasets(cloned_datasets, augmentation_config)
+        support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         
         for i in range(len(support_dataset)):
                 
@@ -210,7 +213,7 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('relabel', 4)]
+    config = [('shuffle', 4)]
 
 
     

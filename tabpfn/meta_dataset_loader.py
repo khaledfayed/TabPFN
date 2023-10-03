@@ -88,6 +88,17 @@ def generate_datasets(datasets, device='cpu'):
         
         datasets[i]['data'] = output.detach().cpu().numpy()
         
+def augment_datasets(datasets, augmentation_config):
+    
+    for i, (augmentation, amount) in enumerate(augmentation_config):
+        
+            augmentation_function = augmentation_dict[augmentation]
+            
+            for i,dataset in enumerate(datasets):
+                
+                datasets[i]['data'] = augmentation_function(datasets[i]['data'])
+                
+                
 def shuffle_dataset_features(transformed_data):
     _, num_cols = transformed_data.shape
     augmented_data = transformed_data.copy()

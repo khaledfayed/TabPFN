@@ -210,8 +210,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    config = [('relabel', 4)]
+    # config = [('relabel', 4)]
 
 
     
-    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay, augmentation_config=config)    
+    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    

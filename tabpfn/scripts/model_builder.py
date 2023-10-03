@@ -109,7 +109,7 @@ def load_model(path, filename, device, eval_positions, verbose):
 
     #print('Memory', str(get_gpu_memory()))
 
-    model = get_model(config_sample, device=device, should_train=True, verbose=verbose)
+    model = get_model(config_sample, device=device, should_train=False, verbose=verbose)
     module_prefix = 'module.'
     model_state = {k.replace(module_prefix, ''): v for k, v in model_state.items()}
     # model[2].load_state_dict(model_state)

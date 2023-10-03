@@ -446,12 +446,8 @@ def main():
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
     datasets = load_OHE_dataset([31], one_hot_encode=False)
-    print(datasets[0]['data'][0])
-    generate_datasets(datasets)
-    print(datasets[0]['data'][0])
-    generate_datasets_gaussian(datasets)
-    print(datasets[0]['data'][0])
-    pass
+    augment_datasets(datasets, [('shuffle_features',1)])
+
     # support, query = meta_dataset_loader3(datasets)
     
     # print(len(support), len(query))

@@ -63,11 +63,11 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
         
-    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False, num_augmented_datasets=num_augmented_datasets, shuffle=False)
+    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
 
     
     
-    test_datasets = load_OHE_dataset(auto_ml_dids_val, shuffle=False, one_hot_encode=False)
+    test_datasets = load_OHE_dataset(auto_ml_dids_val, one_hot_encode=False)
     
     
     #training setup

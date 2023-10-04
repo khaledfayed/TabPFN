@@ -181,7 +181,6 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
 
         
         for i in range(0, dataset_length, 2*batch_size):
-            print('i', i)
             if (dataset_length-i) > batch_size:
                 s_y = np.unique(targets[i:i+batch_size])
                 q_y = np.unique(targets[i+batch_size: i +2*batch_size])

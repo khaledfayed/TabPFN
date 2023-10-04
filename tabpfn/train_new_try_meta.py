@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from scripts.transformer_prediction_interface import TabPFNClassifier
 from scripts.model_builder import save_model
@@ -12,9 +11,7 @@ import wandb
 
 import utils as utils
 from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup, get_restarting_cosine_schedule_with_warmup
-from utils import NOP, normalize_by_used_features_f
-from sklearn.preprocessing import PowerTransformer, QuantileTransformer, RobustScaler
-from torch.cuda.amp import autocast
+from utils import normalize_by_used_features_f
 
 import argparse
 
@@ -54,10 +51,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
     print(weight_decay, lr, wandb_name, epochs)
     if device != 'cpu': wandb.init(
-        # set the wandb project where this run will be logged
         project="thesis",
         name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
-        # track hyperparameters and run metadata
         config={
         "learning_rate": lr,
         "architecture": "TabPFN",
@@ -65,7 +60,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         "epochs": epochs,
         })
     
-    test_dids = [799]
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
         
@@ -87,7 +81,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
-    # scheduler = get_restarting_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100, epochs if epochs is not None else 100)
     
     
     print('Start training')

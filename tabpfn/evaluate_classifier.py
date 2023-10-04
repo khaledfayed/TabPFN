@@ -1,26 +1,10 @@
 from scripts.transformer_prediction_interface import TabPFNClassifier
-from meta_dataset_loader import load_meta_data_loader, split_datasets, load_OHE_dataset, meta_dataset_loader
+from meta_dataset_loader import  load_OHE_dataset
 from sklearn.metrics import accuracy_score
 import time
 import torch
 import wandb
 
-def evaluate_classifier(classifier, dids, train_data=0.7):
-    
-    datasets = load_OHE_dataset(dids)
-    
-    for dataset in datasets:
-        
-        train_index = int(len(dataset['data'])*train_data) if int(len(dataset['data'])*train_data) < 1000 else 1000
-        # fit_batch = meta_dataset_loader([dataset], num_samples_per_class=5, one_batch=True, shuffle=False)
-        fit_data = dataset['data'][:train_index]
-        fit_target = dataset['target'][:train_index]
-        start = time.time()
-        classifier.fit(fit_data, fit_target)
-        y_eval, p_eval = classifier.predict(dataset['data'], return_winning_probability=True)
-        accuracy = accuracy_score(dataset['target'], y_eval)
-        print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
-    return accuracy
 
 def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
     

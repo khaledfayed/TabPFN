@@ -8,6 +8,7 @@ from numpy.random import default_rng
 import torch
 import torch.nn as nn
 import os
+import copy
 
 openml.config.set_cache_directory(os.path.abspath('openml'))
     
@@ -207,8 +208,11 @@ def main():
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    x, y = meta_dataset_loader3(datasets)
-    
+    for i in range(5):
+        clone = copy.deepcopy(datasets)
+
+        augment_datasets(clone, [('drop_features',1)])
+        pass
     # augment_datasets(datasets, [('shuffle_features',1)])
 
     # support, query = meta_dataset_loader3(datasets)

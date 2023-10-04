@@ -8,6 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from evaluate_classifier import evaluate_classifier2, open_cc_dids, auto_ml_dids_train, auto_ml_dids_val
 import wandb
+import copy
 
 import utils as utils
 from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup, get_restarting_cosine_schedule_with_warmup
@@ -100,7 +101,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         accumulator = 0
         # generate_datasets(datasets, device=device)
-        cloned_datasets = datasets.copy()
+        cloned_datasets = copy.deepcopy(datasets)
         augment_datasets(cloned_datasets, augmentation_config)
         support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         

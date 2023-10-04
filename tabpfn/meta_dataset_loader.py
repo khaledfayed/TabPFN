@@ -168,13 +168,6 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
     query_meta_dataset = []
     rng = default_rng()
     
-    debug_batched = {}
-    debug_skipped = {}
-    
-    for d in datasets:
-        debug_batched[d['id']] = 0
-        debug_skipped[d['id']] = 0
-    
     for dataset in datasets:
         
         dataset_length = len(dataset['data'])
@@ -184,8 +177,7 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
         
         data = dataset['data'][dataset_indices]
         targets = dataset['target'][dataset_indices]
-        
-        
+
         
         for i in range(0, dataset_length, 2*batch_size):
             print('i', i)
@@ -195,18 +187,11 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
                 if np.all(np.isin(s_y, q_y)):
                     support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size],  'id' : dataset['id']})
                     query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size], 'id' : dataset['id']})
-                    debug_batched[dataset['id']] += 1
                 else:
                     print('skipped this batch')
-                    debug_skipped[dataset['id']] += 1
+                    
     meta_dataset_indices = np.arange(len(support_meta_dataset))
     rng.shuffle(meta_dataset_indices)
-    num_skipped = 0
-    for d in debug_batched:
-        print('dataset', d, 'batched', debug_batched[d], 'skipped', debug_skipped[d])
-        num_skipped += debug_skipped[d]
-        
-    print('total skipped', num_skipped)
 
     return np.array(support_meta_dataset)[meta_dataset_indices], np.array(query_meta_dataset)[meta_dataset_indices]
     

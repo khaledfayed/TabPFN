@@ -130,13 +130,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 label_encoder = LabelEncoder()
                 
                 output = model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes] #TODO: check if we need to add some sort of style
-                #predicted class is the one with the highest probability
-                # output = torch.nn.functional.softmax(output, dim=-1)
-                
-                # print('unique output', torch.unique(torch.argmax(output, dim=-1)))
-                # print('unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
-                
-                # print('output shape', output.shape, 'y_full unique', torch.unique(y_full), 'unique output', torch.unique(torch.argmax(output, dim=-1)), 'unique y', torch.unique(torch.from_numpy(query_dataset[i]['y']).to(device).long().flatten()))
                     
                 losses = criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_dataset[i]['y'])).to(device).long().flatten())
                 losses = losses.view(*output.shape[0:2])
@@ -157,8 +150,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
                     try:
                         optimizer.step()
-                        # scheduler.step()
-                        # if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
+                        if e > warmup_epochs:
+                            scheduler.step()
+                            if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
                         with torch.no_grad():
                             
                             accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
@@ -186,8 +180,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
         if device != 'cpu': wandb.log({"average_loss": accumulator})
         
-        scheduler.step()
-        if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
+        if e <= warmup_epochs:
+            scheduler.step()
+            if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
         # if e % 10 == 0:
         #     model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'

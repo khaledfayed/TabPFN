@@ -11,6 +11,7 @@ import os
 import copy
 
 openml.config.set_cache_directory(os.path.abspath('openml'))
+print(openml.config.get_cache_directory())
     
 class MyModel(nn.Module):
     def __init__(self, input_size, hidden_size):

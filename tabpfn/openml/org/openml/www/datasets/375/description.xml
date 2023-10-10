@@ -1,0 +1,50 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>375</oml:id>
+  <oml:name>JapaneseVowels</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**: Mineichi Kudo, Jun Toyama, Masaru Shimbo    
+**Source**: [UCI](https://archive.ics.uci.edu/ml/datasets/Japanese+Vowels)    
+**Please cite**:   
+
+**Japanese vowels**  
+This dataset records 640 time series of 12 LPC cepstrum coefficients taken from nine male speakers.
+
+The data was collected for examining our newly developed classifier for multidimensional curves (multidimensional time series). Nine male speakers uttered two Japanese vowels /ae/ successively. For each utterance, with the analysis parameters described below, we applied 12-degree linear prediction analysis to it to obtain a discrete-time series with 12 LPC cepstrum coefficients. This means that one utterance by a speaker forms a time series whose length is in the range 7-29 and each point of a time series is of 12 features (12 coefficients).
+
+Similar data are available for different utterances /ei/, /iu/, /uo/, /oa/ in addition to /ae/. Please contact the donor if you are interested in using this data.
+
+The number of the time series is 640 in total. We used one set of 270 time series for training and the other set of 370 time series for testing.
+
+Analysis parameters:  
+* Sampling rate : 10kHz
+* Frame length : 25.6 ms
+* Shift length : 6.4ms
+* Degree of LPC coefficients : 12
+
+Each line represents 12 LPC coefficients in the increasing order separated by spaces. This corresponds to one analysis
+frame. Lines are organized into blocks, which are a set of 7-29 lines separated by blank lines and corresponds to a single speech utterance of /ae/ with 7-29 frames.
+
+Each speaker is a set of consecutive blocks. In ae.train there are 30 blocks for each speaker. Blocks 1-30 represent speaker 1, blocks 31-60 represent speaker 2, and so on up to speaker 9. In ae.test, speakers 1 to 9 have the corresponding number of blocks: 31 35 88 44 29 24 40 50 29. Thus, blocks 1-31 represent speaker 1 (31 utterances of /ae/), blocks 32-66 represent speaker 2 (35 utterances of /ae/), and so on.
+
+**Past Usage**
+
+M. Kudo, J. Toyama and M. Shimbo. (1999). &quot;Multidimensional Curve Classification Using Passing-Through Regions&quot;. Pattern Recognition Letters, Vol. 20, No. 11--13, pages 1103--1111.
+
+If you publish any work using the dataset, please inform the donor. Use for commercial purposes requires donor permission.
+
+References  
+
+1. http://ips9.main.eng.hokudai.ac.jp/index_e.html
+2. mailto:mine@main.eng.hokudai.ac.jp
+3. mailto:jun@main.eng.hokudai.ac.jp
+4. mailto:shimbo@main.eng.hokudai.ac.jp
+5. http://kdd.ics.uci.edu/
+6. http://www.ics.uci.edu/
+7. http://www.uci.edu/</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator>Mineichi Kudo</oml:creator><oml:creator> Jun Toyama</oml:creator><oml:creator> Masaru Shimbo</oml:creator>      <oml:upload_date>2014-09-27T10:56:03</oml:upload_date>
+  <oml:language>English</oml:language>  <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/52415/JapaneseVowels.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset375/dataset_375.pq</oml:parquet_url>  <oml:file_id>52415</oml:file_id>  <oml:default_target_attribute>speaker</oml:default_target_attribute>        <oml:citation>If you publish any work using the dataset, please inform the donor. Use for commercial purposes requires donor permission.</oml:citation>  <oml:tag>grouped_data</oml:tag><oml:tag>OpenML-CC18</oml:tag><oml:tag>OpenML100</oml:tag><oml:tag>study_1</oml:tag><oml:tag>study_123</oml:tag><oml:tag>study_135</oml:tag><oml:tag>study_14</oml:tag><oml:tag>study_34</oml:tag><oml:tag>study_41</oml:tag><oml:tag>study_7</oml:tag><oml:tag>time_series</oml:tag><oml:tag>uci</oml:tag>  <oml:visibility>public</oml:visibility>  <oml:original_data_url>https://archive.ics.uci.edu/ml/datasets/Japanese+Vowels</oml:original_data_url>  <oml:paper_url>https://www.sciencedirect.com/science/article/pii/S016786559900077X</oml:paper_url>  <oml:minio_url>http://openml1.win.tue.nl/dataset375/dataset_375.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2020-11-20 19:31:48</oml:processing_date>      <oml:md5_checksum>8b59d000ae5310afb26ec66e97fc7724</oml:md5_checksum>
+</oml:data_set_description>

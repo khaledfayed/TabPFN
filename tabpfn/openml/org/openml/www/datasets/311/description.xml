@@ -1,0 +1,20 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>311</oml:id>
+  <oml:name>oil_spill</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**:   
+  
+**Source**: Unknown -   
+**Please cite**:   
+
+Oil dataset
+
+Past Usage:
+1. Kubat, M., Holte, R.,</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator>M. Kubat</oml:creator><oml:creator> R. Holte</oml:creator>  <oml:contributor></oml:contributor>   <oml:collection_date>02.1998</oml:collection_date>  <oml:upload_date>2014-08-25T11:40:11</oml:upload_date>
+  <oml:language>English</oml:language>  <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/52215/oil_spill.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset311/dataset_311.pq</oml:parquet_url>  <oml:file_id>52215</oml:file_id>  <oml:default_target_attribute>class</oml:default_target_attribute>        <oml:citation>Kubat, M., Holte, R.C. &amp; Matwin, S. Machine Learning for the Detection of Oil Spills in Satellite Radar Images. Machine Learning</oml:citation>  <oml:tag>mythbusting_1</oml:tag><oml:tag>study_1</oml:tag><oml:tag>study_15</oml:tag><oml:tag>study_20</oml:tag><oml:tag>study_52</oml:tag><oml:tag>study_7</oml:tag>  <oml:visibility>public</oml:visibility>    <oml:paper_url>https://link.springer.com/article/10.1023/A:1007452223027</oml:paper_url>  <oml:minio_url>http://openml1.win.tue.nl/dataset311/dataset_311.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2020-11-20 18:57:01</oml:processing_date>      <oml:md5_checksum>c236facd7285fb3357922a6918aef8dd</oml:md5_checksum>
+</oml:data_set_description>

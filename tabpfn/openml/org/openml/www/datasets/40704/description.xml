@@ -1,0 +1,12 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>40704</oml:id>
+  <oml:name>Titanic</oml:name>
+  <oml:version>2</oml:version>
+  <oml:description>PMLB version of the Titanic dataset, which only uses 3 features. See version 1 for the complete version: https://www.openml.org/d/40945</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+        <oml:upload_date>2017-04-06T12:38:28</oml:upload_date>
+    <oml:licence>public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/4965305/Titanic.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset40704/dataset_40704.pq</oml:parquet_url>  <oml:file_id>4965305</oml:file_id>  <oml:default_target_attribute>class</oml:default_target_attribute>          <oml:tag>derived</oml:tag>  <oml:visibility>public</oml:visibility>      <oml:minio_url>http://openml1.win.tue.nl/dataset40704/dataset_40704.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2018-10-04 07:15:38</oml:processing_date>      <oml:md5_checksum>08416114dd85d0ebd932fcb1d87650c1</oml:md5_checksum>
+</oml:data_set_description>

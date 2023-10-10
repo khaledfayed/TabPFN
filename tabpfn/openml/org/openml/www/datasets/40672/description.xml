@@ -1,0 +1,14 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>40672</oml:id>
+  <oml:name>fars</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>Re-upload of the dataset as it is present in the Penn ML Benchmark (https://github.com/EpistasisLab/penn-ml-benchmarks/tree/master/datasets/classification/fars).
+It's a dataset on traffic accidents, see https://data.world/nhtsa/fars-data.
+I am not sure of the specific date or aggregation method as it is just a re-upload. </oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+        <oml:upload_date>2017-04-06T12:13:41</oml:upload_date>
+    <oml:licence>public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/4965247/fars.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset40672/dataset_40672.pq</oml:parquet_url>  <oml:file_id>4965247</oml:file_id>  <oml:default_target_attribute>class</oml:default_target_attribute>            <oml:visibility>public</oml:visibility>      <oml:minio_url>http://openml1.win.tue.nl/dataset40672/dataset_40672.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2018-10-04 07:15:55</oml:processing_date>      <oml:md5_checksum>a1965459428de617f31a7a20bb303077</oml:md5_checksum>
+</oml:data_set_description>

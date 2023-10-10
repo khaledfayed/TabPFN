@@ -206,5 +206,5 @@ if __name__ == "__main__":
 
 
     
-    # train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    
-    train()
+    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    
+    # train()

@@ -6,7 +6,7 @@ from meta_dataset_loader import load_OHE_dataset, meta_dataset_loader3, augment_
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
-from evaluate_classifier import evaluate_classifier2, open_cc_dids, auto_ml_dids_train, auto_ml_dids_val
+from evaluate_classifier import evaluate_classifier2, open_cc_dids, auto_ml_dids_train, auto_ml_dids_val, auto_ml_dids_train_full
 import wandb
 import copy
 
@@ -64,7 +64,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
         
-    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
+    datasets = load_OHE_dataset(auto_ml_dids_train_full, one_hot_encode=False)
 
     
     
@@ -206,4 +206,4 @@ if __name__ == "__main__":
 
 
     
-    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay, augmentation_config=config)    
+    train(wandb_name=args.name, epochs=args.epochs, lr=args.lr, weight_decay=args.weight_decay)    

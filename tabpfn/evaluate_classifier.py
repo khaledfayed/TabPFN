@@ -6,7 +6,7 @@ import torch
 import wandb
 
 
-def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
+def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7, log_name=''):
     
     logs = {}
     
@@ -20,11 +20,12 @@ def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7):
         y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
         accuracy = accuracy_score(dataset['target'][512:], y_eval)
         print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
-        wandb_name = f'accuracy_{dataset["id"]}'
+        wandb_name = f'accuracy_{dataset["id"]}' if log_name == '' else f'{log_name}_accuracy_{dataset["id"]}'
         logs[wandb_name] = accuracy
     
     average_accuracy = sum(logs.values())/len(logs.values())
-    logs['average_accuracy'] = average_accuracy
+    average_accuracy_name = f'average_accuracy' if log_name == '' else f'{log_name}_average_accuracy'
+    logs[average_accuracy_name] = average_accuracy
     if log: wandb.log(logs)
     return average_accuracy
         

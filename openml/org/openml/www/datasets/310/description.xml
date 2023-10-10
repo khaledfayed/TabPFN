@@ -1,0 +1,20 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>310</oml:id>
+  <oml:name>mammography</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**:   
+  
+**Source**: Unknown -   
+**Please cite**:   
+
+Mammography dataset
+
+Past Usage:
+1. Woods, K., Doss, C., Bowyer, K., Solka, J., Priebe, C.,</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator></oml:creator>  <oml:contributor></oml:contributor>    <oml:upload_date>2014-08-25T11:38:52</oml:upload_date>
+    <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/52214/mammography.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset310/dataset_310.pq</oml:parquet_url>  <oml:file_id>52214</oml:file_id>  <oml:default_target_attribute>class</oml:default_target_attribute>          <oml:tag>mythbusting_1</oml:tag><oml:tag>study_1</oml:tag><oml:tag>study_15</oml:tag><oml:tag>study_20</oml:tag><oml:tag>study_50</oml:tag><oml:tag>study_52</oml:tag><oml:tag>study_7</oml:tag>  <oml:visibility>public</oml:visibility>      <oml:minio_url>http://openml1.win.tue.nl/dataset310/dataset_310.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2020-11-20 20:13:06</oml:processing_date>      <oml:md5_checksum>5feded5bcc067a737ec94f50ad42e93a</oml:md5_checksum>
+</oml:data_set_description>

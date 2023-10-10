@@ -1,0 +1,75 @@
+<oml:data_set_description xmlns:oml="http://openml.org/openml">
+  <oml:id>1044</oml:id>
+  <oml:name>eye_movements</oml:name>
+  <oml:version>1</oml:version>
+  <oml:description>**Author**:   
+**Source**: Unknown - Date unknown  
+**Please cite**:   
+
+Jarkko Salojarvi, Kai Puolamaki, Jaana Simola, Lauri Kovanen, Ilpo Kojo, Samuel Kaski. Inferring Relevance from Eye Movements: Feature Extraction. Helsinki University of Technology, Publications in Computer and Information Science, Report A82. 3 March 2005. Data set at http://www.cis.hut.fi/eyechallenge2005/
+
+Competition 1 (preprocessed data)
+A straight-forward classification task. We provide pre-computed feature vectors for each word in the eye movement trajectory, with class labels.
+
+The dataset consist of several assignments. Each assignment consists of a question followed by ten sentences (titles of news articles). One of the sentences is the correct answer to the question (C) and five of the sentences are irrelevant to the question (I). Four of the sentences are relevant to the question (R), but they do not answer it.
+
+
+* Features are in columns, feature vectors in rows.
+* Each assignment is a time sequence of 22-dimensional feature vectors.
+* The first column is the line number, second the assignment number and the next 22 columns (3 to 24) are the different features. Columns 25 to 27 contain extra information about the example. The training data set contains the classification label in the 28th column: &quot;0&quot; for irrelevant, &quot;1&quot; for relevant and &quot;2&quot; for the correct answer.
+* Each example (row) represents a single word. You are asked to return the classification of each read sentence.
+* The 22 features provided are commonly used in psychological studies on eye movement. All of them are not necessarily relevant in this context.
+
+The objective of the Challenge is to predict the classification labels (I, R, C).
+
+
+
+Please see the technical report for information of eye movements, experimental setup, baseline methods and references:
+
+Jarkko Salojarvi, Kai Puolamaki, Jaana Simola, Lauri Kovanen, Ilpo Kojo, Samuel Kaski. Inferring Relevance from Eye Movements: Feature Extraction. Helsinki University of Technology, Publications in Computer and Information Science, Report A82. 3 March 2005. [PDF]
+
+
+
+Modified by TunedIT (converted to ARFF format)
+
+
+FEATURES
+
+The values in columns marked with an asterisk (*) are same for all occurances of the word.
+
+COL	NAME		DESCRIPTION
+1	#line		Line number
+2	#assg		Assignment Number
+3	fixcount	Number of fixations to the word
+4*	firstPassCnt	Number of fixations to the word when it is first encountered
+5*	P1stFixation	'1' if fixation occured when the sentence the word was in was encountered the first time
+6*	P2stFixation	'1' if fixation occured when the sentence the word was in was encountered the second time
+7*	prevFixDur	Duration of previous fixation
+8*	firstfixDur	Duration of the first fixation when the word is first encountered
+9*	firstPassFixDur	Sum of durations of fixations when the word is first encountered
+10*	nextFixDur	Duration of the next fixation when gaze initially moves from the word
+11	firstSaccLen	Length of the first saccade
+12	lastSaccLen	Distance between fixation on the word and the next fixation
+13	prevFixPos	Distance between the first fixation preceding the word and the beginning ot the word
+14	landingPos	Distance between the first fixation on the word and the beginning of the word
+15	leavingPos	Distance between the last fixation on the word and the beginning of the word
+16	totalFixDur	Sum of all durations of fixations to the word
+17	meanFixDur	Mean duration of the fixations to the word
+18*	nRegressFrom	Number of regressions leaving from the word
+19*	regressLen	Sum of durations of regressions initiating from this word
+20*	nextWordRegress	'1' if a regression initiated from the following word
+21*	regressDur	Sum of durations of the fixations on the word during regression
+22	pupilDiamMax	Maximum pupil diameter
+23	pupilDiamLag	Maximum pupil diameter 0.5 - 1.5 seconds after the beginning of fixation
+24	timePrtctg	First fixation duration divided by the total number of fixations
+25	nWordsInTitle	Number of word in the sentence (title) this word is in
+26	titleNo		Title number
+27	wordNo		Word number (ordinal) in this title
+28	label		Classification for training data ('0'=irrelevant, '1'=relevant, '2'=correct)</oml:description>
+  <oml:description_version>1</oml:description_version>
+  <oml:format>ARFF</oml:format>
+  <oml:creator>Jarkko Salojarvi</oml:creator><oml:creator> Kai Puolamaki</oml:creator><oml:creator> Jaana Simola</oml:creator><oml:creator> Lauri Kovanen</oml:creator><oml:creator> Ilpo Kojo</oml:creator><oml:creator> Samuel Kaski</oml:creator>     <oml:collection_date>2005-03-03</oml:collection_date>  <oml:upload_date>2014-10-06T23:56:42</oml:upload_date>
+  <oml:language>English</oml:language>  <oml:licence>Public</oml:licence>  <oml:url>https://api.openml.org/data/v1/download/53927/eye_movements.arff</oml:url>
+  <oml:parquet_url>http://openml1.win.tue.nl/dataset1044/dataset_1044.pq</oml:parquet_url>  <oml:file_id>53927</oml:file_id>  <oml:default_target_attribute>label</oml:default_target_attribute>        <oml:citation>Salojarvi, Jarkko, et al. &quot;Inferring relevance from eye movements: Feature extraction.&quot; Workshop at NIPS 2005, in Whistler, BC, Canada, on December 10, 2005.. 2005.</oml:citation>  <oml:tag>grouped_data</oml:tag><oml:tag>study_1</oml:tag><oml:tag>study_144</oml:tag><oml:tag>study_41</oml:tag><oml:tag>study_7</oml:tag><oml:tag>time_series</oml:tag>  <oml:visibility>public</oml:visibility>  <oml:original_data_url>http://www.cis.hut.fi/eyechallenge2005/</oml:original_data_url>  <oml:paper_url>http://research.ics.aalto.fi/events/eyechallenge2005/irem-2005-03-03.pdf</oml:paper_url>  <oml:minio_url>http://openml1.win.tue.nl/dataset1044/dataset_1044.pq</oml:minio_url>  <oml:status>active</oml:status>
+  <oml:processing_date>2018-10-03 21:24:49</oml:processing_date>      <oml:md5_checksum>47a6d4f6e9a6790cbf63a7a4f6bf983a</oml:md5_checksum>
+</oml:data_set_description>

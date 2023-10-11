@@ -64,7 +64,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
         
-    datasets = load_OHE_dataset(auto_ml_dids_train_full, one_hot_encode=False)
+    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
 
     
     
@@ -189,6 +189,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             save_model(model, 'models_diff/', checkpoint, config)
         
         accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
+        wandb.log({"epoch": e})
         
         
         

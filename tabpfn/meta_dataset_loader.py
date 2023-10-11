@@ -131,7 +131,7 @@ augmentation_dict = {
 
 def load_OHE_dataset(dids, one_hot_encode=True):
     encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
-    target_encoder = TargetEncoder()
+    target_encoder = TargetEncoder(target_type='binary')
     label_encoder = LabelEncoder()
 
     datasets = openml.datasets.get_datasets(dids)
@@ -142,6 +142,8 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         X, y, categorical_features, attribute_names = dataset.get_data(
             target=dataset.default_target_attribute,
         )
+        
+        print(dataset.id)
         
         num_categorical_features = np.sum(categorical_features)
                 

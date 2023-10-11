@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder, TargetEncoder
 import openml
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -131,6 +131,7 @@ augmentation_dict = {
 
 def load_OHE_dataset(dids, one_hot_encode=True):
     encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
+    target_encoder = TargetEncoder()
     label_encoder = LabelEncoder()
 
     datasets = openml.datasets.get_datasets(dids)
@@ -150,13 +151,13 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         categorical_columns = [col for col, is_categorical in zip(attribute_names, categorical_features) if is_categorical]
         
         preprocessor = ColumnTransformer(
-            transformers=[('cat', encoder, categorical_columns)],
+            transformers=[('cat', target_encoder, categorical_columns)],
             remainder='passthrough'
         )
         
         pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
         
-        transformed_data = pipeline.fit_transform(df)
+        transformed_data = pipeline.fit_transform(df, y)
         transformed_targets = label_encoder.fit_transform(y)
                     
         encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id})
@@ -198,21 +199,23 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
     
 
 def main():
-    auto_ml_dids_train = [   23,    28,    30,    44,    60,   181,   182,   375,
-         725,   728,   735,   737,   752,   761,   772,   803,   807,
-         816,   819,   833,   847,   871,   923,  1049,  1050,  1056,
-        1069,  1462,  1466,  1475,  1487,  1496,  1497,  1504,  1507,
-        1528,  1529,  1530,  1535,  1538,  1541,  4538, 40498, 40646,
-       40647, 40648, 40649, 40650, 40677, 40680, 40691, 40701, 40704,
-       40900, 40982, 40983, 42193]
+    # auto_ml_dids_train = [   23,    28,    30,    44,    60,   181,   182,   375,
+    #      725,   728,   735,   737,   752,   761,   772,   803,   807,
+    #      816,   819,   833,   847,   871,   923,  1049,  1050,  1056,
+    #     1069,  1462,  1466,  1475,  1487,  1496,  1497,  1504,  1507,
+    #     1528,  1529,  1530,  1535,  1538,  1541,  4538, 40498, 40646,
+    #    40647, 40648, 40649, 40650, 40677, 40680, 40691, 40701, 40704,
+    #    40900, 40982, 40983, 42193]
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
-    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    for i in range(5):
-        clone = copy.deepcopy(datasets)
+    datasets = load_OHE_dataset([31], one_hot_encode=False)
+    pass
+    
+    # for i in range(5):
+    #     clone = copy.deepcopy(datasets)
 
-        augment_datasets(clone, [('drop_features',1)])
-        pass
+    #     augment_datasets(clone, [('drop_features',1)])
+    #     pass
     # augment_datasets(datasets, [('shuffle_features',1)])
 
     # support, query = meta_dataset_loader3(datasets)

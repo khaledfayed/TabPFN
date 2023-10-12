@@ -52,7 +52,10 @@ def augment_datasets(datasets, augmentation_config):
             
             for i,dataset in enumerate(datasets):
                 
-                datasets[i]['data'] = augmentation_function(datasets[i]['data'])
+                if augmentation == 'relabel':
+                    datasets[i]['data'], datasets[i]['target'] = augmentation_function(datasets[i]['data'], datasets[i]['target'], datasets[i]['num_categorical_features'])
+                else:
+                    datasets[i]['data'] = augmentation_function(datasets[i]['data'])
                 
                 
 def shuffle_dataset_features(transformed_data):
@@ -105,15 +108,16 @@ def relabel_augmentation(features, labels, num_categorical_features):
     # Add the old label as a new feature
     augmented_features = np.hstack((features, old_label))
     
-    if new_label_index > num_categorical_features:
+    if new_label_index >= num_categorical_features or np.unique(new_labels).shape[0] >= 10:
         median = np.median(new_labels)
-        min_value = np.min(new_labels)
-        max_value = np.max(new_labels)
+        # min_value = np.min(new_labels)
+        # max_value = np.max(new_labels)
         
-        value_range = max_value - min_value
-        class_width = value_range / np.unique(old_label).shape[0]-1
+        # value_range = max_value - min_value
+        # class_width = value_range / np.unique(old_label).shape[0]-1
         
-        new_labels = ((new_labels - min_value) / class_width).astype(int)
+        # new_labels = ((new_labels - min_value) / class_width).astype(int) 
+        new_labels = np.where(new_labels > median, 1, 0)
 
     # Encode the new labels using LabelEncoder
     label_encoder = LabelEncoder()
@@ -151,7 +155,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         categorical_columns = [col for col, is_categorical in zip(attribute_names, categorical_features) if is_categorical]
         
         preprocessor = ColumnTransformer(
-            transformers=[('cat', target_encoder, categorical_columns)],
+            transformers=[('cat', encoder, categorical_columns)],
             remainder='passthrough'
         )
         
@@ -160,7 +164,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         transformed_data = pipeline.fit_transform(df, y)
         transformed_targets = label_encoder.fit_transform(y)
                     
-        encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id})
+        encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id, 'num_categorical_features': num_categorical_features})
     
     return encoded_datasets
 
@@ -209,6 +213,8 @@ def main():
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
     datasets = load_OHE_dataset([31], one_hot_encode=False)
+    for dataset in datasets:
+        augmented_dataset = relabel_augmentation(dataset['data'], dataset['target'], dataset['num_categorical_features'])
     pass
     
     # for i in range(5):

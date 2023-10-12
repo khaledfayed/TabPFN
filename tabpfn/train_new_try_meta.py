@@ -29,7 +29,7 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
             raise Exception("Transforms only allow one batch dim - TODO")
 
         # eval_xs, eval_ys = normalize_data(eval_xs), normalize_data(eval_ys)
-        # eval_xs = normalize_data(eval_xs, normalize_positions=-1 if normalize_with_test else eval_position)
+        eval_xs = normalize_data(eval_xs, normalize_positions=-1 if normalize_with_test else eval_position)
 
         # Removing empty features
         eval_xs = eval_xs[:, 0, :]
@@ -43,8 +43,8 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
         # TODO: Cautian there is information leakage when to_ranking is used, we should not use it
         eval_xs = remove_outliers(eval_xs, normalize_positions=-1 if normalize_with_test else eval_position) if not normalize_to_ranking else normalize_data(to_ranking_low_mem(eval_xs))
         # Rescale X
-        # eval_xs = normalize_by_used_features_f(eval_xs, eval_xs.shape[-1], max_features,
-        #                                        normalize_with_sqrt=normalize_with_sqrt)
+        eval_xs = normalize_by_used_features_f(eval_xs, eval_xs.shape[-1], max_features,
+                                               normalize_with_sqrt=normalize_with_sqrt)
 
         return eval_xs.to(device)
 
@@ -188,7 +188,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
         
-        accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
+            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
         wandb.log({"epoch": e})
         
         
@@ -206,7 +206,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    config = [('shuffle_features', 2)]
+    # config = [('shuffle_features', 2)]
+    config = []
 
 
     

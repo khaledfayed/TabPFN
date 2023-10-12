@@ -206,7 +206,7 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    config = [('shuffle_features', 2)]
+    config = [('drop_features', 2)]
     # config = []
 
 

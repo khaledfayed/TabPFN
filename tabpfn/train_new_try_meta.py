@@ -183,7 +183,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         scheduler.step()
         if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
-        if e % 50 == 0:
+        if e % 100 == 0:
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'

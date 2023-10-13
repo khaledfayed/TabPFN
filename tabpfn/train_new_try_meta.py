@@ -207,8 +207,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    config = [('relabel', 2), ('shuffle_features', 1)]
-    # config = []
+    # config = [('relabel', 2), ('shuffle_features', 1)]
+    config = [('shuffle_features', 1)]
 
 
     

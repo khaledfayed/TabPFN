@@ -38,7 +38,7 @@ conda activate thesis
 # Running the job
 start=`date +%s`
 
-python train_new_try_meta.py --epochs 4000 --lr 0.0001 --weight_decay 0.0001 --name "1.b.1_shuffle_4000"
+python train_new_try_meta.py --epochs 4000 --lr 0.0001 --weight_decay 0.0001 --name "1.e.1_relabel+shuffle_4000"
 
 end=`date +%s`
 runtime=$((end-start))

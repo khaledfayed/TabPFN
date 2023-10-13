@@ -19,7 +19,6 @@ def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7, log_na
         classifier.fit(fit_data, fit_target)
         y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
         accuracy = accuracy_score(dataset['target'][512:], y_eval)
-        print('Dataset ID:',dataset['id'], 'Shape:', dataset['data'].shape, 'Prediction time: ', time.time() - start, 'Accuracy', accuracy, '\n')
         wandb_name = f'accuracy_{dataset["id"]}' if log_name == '' else f'{log_name}_accuracy_{dataset["id"]}'
         logs[wandb_name] = accuracy
     

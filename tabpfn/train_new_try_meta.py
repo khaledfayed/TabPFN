@@ -50,7 +50,6 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
 
 def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weight_decay=0.0, augmentation_config = []):
 
-    print(weight_decay, lr, wandb_name, epochs)
     if device != 'cpu': wandb.init(
         project="thesis",
         name=f"{wandb_name}_{num_augmented_datasets}_{lr}",
@@ -137,7 +136,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                 
                 loss, nan_share = utils.torch_nanmean(losses.mean(0), return_nanshare=True)
                 
-                print('Epoch:', e, '|' "loss :", loss.item(), optimizer.param_groups[0]['lr'])
                 accumulator += loss.item()
                     
                 did = support_dataset[i]['id']
@@ -191,12 +189,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
             accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
         wandb.log({"epoch": e})
+        print('Epoch:', e, 'loss:', accumulator)
         
-        
-        
-        # scheduler.step()
-        # print(scheduler.get_last_lr())
-        # print()
+    
         
 
 if __name__ == "__main__":
@@ -208,7 +203,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # config = [('relabel', 2), ('shuffle_features', 1)]
-    config = []
+    config = [('shuffle_features', 1)]
 
 
     

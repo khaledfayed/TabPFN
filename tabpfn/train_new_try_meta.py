@@ -49,8 +49,6 @@ def preprocess_input(eval_xs, eval_ys, eval_position):
         return eval_xs.to(device)
 
 def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weight_decay=0.0, augmentation_config = []):
-
-    print(augmentation_config)
     
     if device != 'cpu': wandb.init(
         project="thesis",
@@ -61,6 +59,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         "dataset": "meta-dataset",
         "epochs": epochs,
         })
+    
+    print(augmentation_config)
     
     classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    config = [('relabel', 2), ('shuffle_features', 1)]
+    config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
     # config = []

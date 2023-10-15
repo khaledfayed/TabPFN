@@ -13,7 +13,7 @@ import copy
 import utils as utils
 from utils import normalize_data, to_ranking_low_mem, remove_outliers, get_cosine_schedule_with_warmup, get_restarting_cosine_schedule_with_warmup
 from utils import normalize_by_used_features_f
-
+import os
 import argparse
 
 normalize_with_test= False
@@ -87,6 +87,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     if torch.cuda.device_count() > 1:
         print('obaa')
+        os.environ['MASTER_ADDR'] = 'localhost'
+        os.environ['MASTER_PORT'] = '12355'
         torch.distributed.init_process_group("nccl",init_method="env://", rank=1, world_size=2)
 
         

@@ -85,7 +85,10 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs, epochs if epochs is not None else 100) # when training for fixed time lr schedule takes 100 steps
     # scheduler = get_restarting_cosine_schedule_with_warmup(optimizer, warmup_epochs, 500, 500)
     
-    
+    if torch.cuda.device_count() > 1:
+        print('obaa')
+        model = torch.nn.DataParallel(model)
+        
     print('Start training')
     with torch.no_grad():
         evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')

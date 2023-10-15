@@ -87,7 +87,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     if torch.cuda.device_count() > 1:
         print('obaa')
-        torch.distributed.init_process_group("nccl", rank=1, world_size=2)
+        torch.distributed.init_process_group("nccl",init_method="env://", rank=1, world_size=2)
 
         
     print('Start training')

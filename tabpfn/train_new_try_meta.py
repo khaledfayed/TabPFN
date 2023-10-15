@@ -86,7 +86,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     # scheduler = get_restarting_cosine_schedule_with_warmup(optimizer, warmup_epochs, 500, 500)
     
     if torch.cuda.device_count() > 1:
-        print(obaa)
+        print('obaa')
         model = torch.nn.DataParallel(model)
         
     print('Start training')

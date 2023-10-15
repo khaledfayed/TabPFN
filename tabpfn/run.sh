@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the partition on which the job shall run.
-#SBATCH --partition aisdlc_gpu-rtx2080    # short: -p <partition_name>
+#SBATCH --partition ml_gpu-rtx2080    # short: -p <partition_name>
 
 # Define a name for your job
 #SBATCH --job-name metanet             # short: -J <job name>

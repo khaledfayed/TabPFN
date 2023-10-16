@@ -61,6 +61,6 @@ model = SimpleMLP()
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=16)
 
-trainer = pl.Trainer(max_epochs=50000000, devices=-1, plugins=['ClusterEnvironment'] ) #
+trainer = pl.Trainer(max_epochs=50000000, devices=-1) #
 trainer.fit(model, train_loader, val_loader)
  

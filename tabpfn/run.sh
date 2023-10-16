@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the partition on which the job shall run.
-#SBATCH --partition ml_gpu-rtx2080    # short: -p <partition_name>
+#SBATCH --partition aisdlc_gpu-rtx2080    # short: -p <partition_name>
 
 # Define a name for your job
 #SBATCH --job-name metanet             # short: -J <job name>
@@ -38,7 +38,7 @@ conda activate thesis
 # Running the job
 start=`date +%s`
 
-python train_new_try_meta.py --epochs 8000 --lr 0.00009 --weight_decay 0.0001 --name "1.g.3_18000_fine"
+python train_new_try_meta.py --epochs 4000 --lr 0.00005 --weight_decay 0.0001 --name "1.a.3"
 
 end=`date +%s`
 runtime=$((end-start))

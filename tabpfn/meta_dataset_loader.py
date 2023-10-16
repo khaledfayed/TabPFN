@@ -122,6 +122,15 @@ def drop_dataset_features(input_array):
     
     return result_array
 
+def get_percentile_thresholds(n):
+    return [(i * 100) / n for i in range(1, n)]
+
+def ordinal_encode_np(data, n_encodings):
+    thresholds = get_percentile_thresholds(n_encodings)
+    percentiles = np.percentile(data, thresholds)
+    encoded = np.digitize(data, bins=percentiles)
+    return encoded
+
 def relabel_augmentation(features, labels, num_categorical_features):
     # Randomly select a feature to be used as the new label
     num_features = features.shape[1]
@@ -139,7 +148,8 @@ def relabel_augmentation(features, labels, num_categorical_features):
     augmented_features = np.hstack((features, old_label))
     
     if new_label_index >= num_categorical_features or np.unique(new_labels).shape[0] >= 10:
-        median = np.median(new_labels)
+        
+        # median = np.median(new_labels)
         # min_value = np.min(new_labels)
         # max_value = np.max(new_labels)
         
@@ -147,7 +157,10 @@ def relabel_augmentation(features, labels, num_categorical_features):
         # class_width = value_range / np.unique(old_label).shape[0]-1
         
         # new_labels = ((new_labels - min_value) / class_width).astype(int) 
-        new_labels = np.where(new_labels > median, 1, 0)
+        # new_labels = np.where(new_labels > median, 1, 0)
+        
+        num_classes = np.random.randint(2, 11)
+        new_labels = ordinal_encode_np(new_labels, num_classes)
 
     # Encode the new labels using LabelEncoder
     label_encoder = LabelEncoder()
@@ -240,17 +253,18 @@ def main():
     #     1528,  1529,  1530,  1535,  1538,  1541,  4538, 40498, 40646,
     #    40647, 40648, 40649, 40650, 40677, 40680, 40691, 40701, 40704,
     #    40900, 40982, 40983, 42193]
+
     
     # config = [('relabel',1),('drop_features', 1),('shuffle_features', 2), ('exp_scaling', 1), ('log_scaling', 1) ]
     datasets = load_OHE_dataset([31], one_hot_encode=False)
-    generate_datasets_gaussian(datasets)
+    # generate_datasets_gaussian(datasets)
     pass
     
     
     
-    # for dataset in datasets:
-    #     augmented_dataset = relabel_augmentation(dataset['data'], dataset['target'], dataset['num_categorical_features'])
-    # pass
+    for dataset in datasets:
+        augmented_dataset = relabel_augmentation(dataset['data'], dataset['target'], dataset['num_categorical_features'])
+    pass
     
     # for i in range(5):
     #     clone = copy.deepcopy(datasets)

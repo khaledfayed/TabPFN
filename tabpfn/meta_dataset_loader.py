@@ -18,14 +18,14 @@ class OneLayerModel(nn.Module):
         super(OneLayerModel, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)  # Example linear layer with bias
         nn.init.normal_(self.fc1.weight, mean=0.0, std=1)  # Normal initialization with mean=0.0 and std=0.01
-        self.sig = nn.Sigmoid()
-        self.fc2 = nn.Linear(hidden_size, output_size)  # Example linear layer with bias
-        nn.init.normal_(self.fc2.weight, mean=0.0, std=1)  # Normal initialization with mean=0.0 and std=0.01
+        # self.sig = nn.Sigmoid()
+        # self.fc2 = nn.Linear(hidden_size, output_size)  # Example linear layer with bias
+        # nn.init.normal_(self.fc2.weight, mean=0.0, std=1)  # Normal initialization with mean=0.0 and std=0.01
 
     def forward(self, x):
         x = self.fc1(x)
-        x = self.sig(x)
-        x = self.fc2(x)
+        # x = self.sig(x)
+        # x = self.fc2(x)
                 
         return x
     
@@ -58,14 +58,14 @@ class OneLayerModel(nn.Module):
 def generate_datasets_gaussian(datasets, device='cpu'):
     
     # model = MyModel(1, 1).to(device)
-    model = OneLayerModel(20, 70, 30).to(device)
+    model = OneLayerModel(1, 1, 1).to(device)
     
     for i,dataset in enumerate(datasets):
         
-        # delattr(model, 'fc1')
-        # model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
-        # nn.init.normal_(model.fc1.weight, mean=0.0, std=0.01)
-        # model.fc1.to(device)
+        delattr(model, 'fc1')
+        model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
+        nn.init.normal_(model.fc1.weight, mean=0.0, std=0.01)
+        model.fc1.to(device)
         
         X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)
         

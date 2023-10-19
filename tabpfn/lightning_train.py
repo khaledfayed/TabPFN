@@ -168,7 +168,7 @@ if __name__ == "__main__":
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
     test_datasets = load_OHE_dataset(auto_ml_dids_val, one_hot_encode=False)
 
-    train_loader = TrainDataLoader(datasets, num_workers=0)
+    train_loader = TrainDataLoader(datasets, num_workers=4)
     
     trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, limit_train_batches=10)
     trainer.fit(metaNet, train_loader, train_loader)

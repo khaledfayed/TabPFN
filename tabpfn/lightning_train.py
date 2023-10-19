@@ -93,23 +93,26 @@ class MetaNet(pl.LightningModule):
         eval_pos = support_batch['x'].shape[0]
         num_classes = len(torch.unique(y_full))
         num_classes_query = len(np.unique(query_batch['y']))
+        if num_classes > 1 and num_classes_query <= num_classes:
                 
-        X_full = preprocess_input(X_full, y_full, eval_pos)
-        X_full.requires_grad=True
-        X_full = torch.cat(
-                [X_full,
-                torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
-        self.criterion.weight=torch.ones(num_classes)
-        self.model.to(device)
-        label_encoder = LabelEncoder()
-        output = self(X_full, y_full, eval_pos, num_classes)
-        losses = self.criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_batch['y'])).to(device).long().flatten())
-        losses = losses.view(*output.shape[0:2])
-        loss, _ = torch_nanmean(losses.mean(0), return_nanshare=True)
-        # self.accumulator += loss.item()
-        # did = support_batch['id']
-        # if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
-        return loss
+            X_full = preprocess_input(X_full, y_full, eval_pos)
+            X_full.requires_grad=True
+            X_full = torch.cat(
+                    [X_full,
+                    torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
+            self.criterion.weight=torch.ones(num_classes)
+            self.model.to(device)
+            label_encoder = LabelEncoder()
+            output = self(X_full, y_full, eval_pos, num_classes)
+            losses = self.criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_batch['y'])).to(device).long().flatten())
+            losses = losses.view(*output.shape[0:2])
+            loss, _ = torch_nanmean(losses.mean(0), return_nanshare=True)
+            # self.accumulator += loss.item()
+            # did = support_batch['id']
+            # if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
+            return loss
+        
+        return
         
         
 

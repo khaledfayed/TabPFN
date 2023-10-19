@@ -149,7 +149,7 @@ class TrainDataLoader(DataLoader):
     def __init__(self, datasets, *args, **kwargs):
         self.datasets = datasets
         self.num_batches = 0
-        super(TrainDataLoader, self).__init__(datasets, *args, **kwargs)
+        super(TrainDataLoader, self).__init__(*args, **kwargs)
 
     
     def __iter__(self):

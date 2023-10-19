@@ -140,9 +140,8 @@ class TrainDataLoader(DataLoader):
 
     
     def __iter__(self):
-        support_dataset, query_dataset = meta_dataset_loader3(datasets)
-        self.num_batches = len(support_dataset)
-        return iter(zip(support_dataset, query_dataset))
+        self.num_batches = len(self.dataset)
+        return iter(self.dataset)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A script with command-line arguments")
@@ -167,8 +166,11 @@ if __name__ == "__main__":
     
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
     test_datasets = load_OHE_dataset(auto_ml_dids_val, one_hot_encode=False)
+    s, q = meta_dataset_loader3(datasets)
+    
 
-    train_loader = DataLoader(zip(meta_dataset_loader3(datasets)), num_workers=1, batch_size=1)
+    train_loader = TrainDataLoader([(x, y) for x, y in zip(s,q)], num_workers=1, batch_size=1)
+    
     
     trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, limit_train_batches=10, num_sanity_val_steps=0)
     trainer.fit(metaNet, train_loader, train_loader)

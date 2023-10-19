@@ -180,7 +180,7 @@ if __name__ == "__main__":
 
     metaNet = MetaNet(classifier, lr=0.0001, weight_decay=0.0001)
     
-    datasets = load_OHE_dataset([31], one_hot_encode=False)
+    datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
     test_datasets = load_OHE_dataset(auto_ml_dids_val, one_hot_encode=False)
 
     train_loader = TrainDataLoader(datasets)

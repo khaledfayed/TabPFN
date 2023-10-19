@@ -149,12 +149,12 @@ class TrainDataLoader(DataLoader):
     def __init__(self, *args, **kwargs):
         super(TrainDataLoader, self).__init__(*args, **kwargs)
         self.num_batches = 0
-        self.dataset = zip(meta_dataset_loader3(datasets))
 
     
     def __iter__(self):
-        self.num_batches = 10
-        return iter(self.dataset)
+        support_dataset, query_dataset = meta_dataset_loader3(datasets)
+        self.num_batches = len(support_dataset)
+        return iter(zip(support_dataset, query_dataset))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A script with command-line arguments")
@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
     train_loader = TrainDataLoader(datasets, num_workers=7)
     
-    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, use_distributed_sampler=False, reload_dataloaders_every_n_epochs=1, limit_train_batches=50) #
+    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, use_distributed_sampler=False, reload_dataloaders_every_n_epochs=1, limit_train_batches=40)
     trainer.fit(metaNet, train_loader)
 
 

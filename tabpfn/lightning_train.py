@@ -73,7 +73,6 @@ class MetaNet(pl.LightningModule):
         "learning_rate": lr,
         "architecture": "TabPFN",
         "dataset": "meta-dataset",
-        "epochs": self.trainer.max_epochs,
         })
 
     def forward(self, X_full, y_full, eval_pos, num_classes):

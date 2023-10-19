@@ -146,15 +146,14 @@ from meta_dataset_loader import load_OHE_dataset,meta_dataset_loader3
 from evaluate_classifier import auto_ml_dids_train
 
 class TrainDataLoader(DataLoader):
-    def __init__(self, datasets):
-        self.datasets = datasets
+    def __init__(self, *args, **kwargs):
+        super(TrainDataLoader, self).__init__(*args, **kwargs)
         self.num_batches = 0
-        super(TrainDataLoader, self).__init__(datasets)
 
     
     def __iter__(self):
 
-        support_dataset, query_dataset = meta_dataset_loader3(self.datasets)
+        support_dataset, query_dataset = meta_dataset_loader3(datasets)
         self.num_batches = len(support_dataset)
         return iter(zip(support_dataset, query_dataset))
 

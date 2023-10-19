@@ -117,9 +117,9 @@ class MetaNet(pl.LightningModule):
         print(9)
         loss, _ = torch_nanmean(losses.mean(0), return_nanshare=True)
         print(10)
-        self.accumulator += loss.item()
+        # self.accumulator += loss.item()
         print(11)
-        did = support_batch['id']
+        # did = support_batch['id']
         # if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
         print(12)
         return loss

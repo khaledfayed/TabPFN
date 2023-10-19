@@ -175,7 +175,7 @@ if __name__ == "__main__":
     train_loader = TrainDataLoader([(x, y) for x, y in zip(s,q)], num_workers=1, batch_size=1)
     
     
-    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, limit_train_batches=10, num_sanity_val_steps=0)
+    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, num_sanity_val_steps=0)
     trainer.fit(metaNet, train_loader, train_loader)
 
 

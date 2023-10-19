@@ -86,40 +86,42 @@ class MetaNet(pl.LightningModule):
         # return loss
         support_batch, query_batch = batch
         
+        print(1)
+        
         X_full = np.concatenate([support_batch['x'], query_batch['x']], axis=0)
         X_full = torch.tensor(X_full, device=device,dtype=torch.float32, requires_grad=False).float().unsqueeze(1)
         y_full = np.concatenate([support_batch['y'], np.zeros_like(query_batch['x'][:, 0])], axis=0)
         y_full = torch.tensor(support_batch['y'], device=device, dtype=torch.float32, requires_grad=True).float().unsqueeze(1)
         eval_pos = support_batch['x'].shape[0]
-        
+        print(2)
         num_classes = len(torch.unique(y_full))
         num_classes_query = len(np.unique(query_batch['y']))
-        
+        print(3)
                 
         X_full = preprocess_input(X_full, y_full, eval_pos)
         X_full.requires_grad=True
         X_full = torch.cat(
                 [X_full,
                 torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
-        
+        print(4)
         self.criterion.weight=torch.ones(num_classes)
-        
+        print(5)
         self.model.to(device)
-        
+        print(6)
         label_encoder = LabelEncoder()
-        
+        print(7)
         output = self(X_full, y_full, eval_pos, num_classes)
-        
+        print(8)
         losses = self.criterion(output.reshape(-1, num_classes) , torch.from_numpy(label_encoder.fit_transform(query_batch['y'])).to(device).long().flatten())
         losses = losses.view(*output.shape[0:2])
-            
+        print(9)
         loss, _ = torch_nanmean(losses.mean(0), return_nanshare=True)
-        
+        print(10)
         self.accumulator += loss.item()
-        
+        print(11)
         did = support_batch['id']
         # if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
-        
+        print(12)
         return loss
         
         

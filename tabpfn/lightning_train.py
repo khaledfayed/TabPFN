@@ -14,7 +14,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from evaluate_classifier import evaluate_classifier2, auto_ml_dids_train, auto_ml_dids_val
 import argparse
-import wandb
+# import wandb
 
 
 
@@ -66,14 +66,14 @@ class MetaNet(pl.LightningModule):
         self.augmentation_config = augmentation_config
         self.accumulator = 0
         
-        if device != 'cpu': wandb.init(
-        project="thesis",
-        name=f"{wandb_name}_{lr}",
-        config={
-        "learning_rate": lr,
-        "architecture": "TabPFN",
-        "dataset": "meta-dataset",
-        })
+        # if device != 'cpu': wandb.init(
+        # project="thesis",
+        # name=f"{wandb_name}_{lr}",
+        # config={
+        # "learning_rate": lr,
+        # "architecture": "TabPFN",
+        # "dataset": "meta-dataset",
+        # })
 
     def forward(self, X_full, y_full, eval_pos, num_classes):
         x = self.model((None, X_full, y_full) ,single_eval_pos=eval_pos)[:, :, 0:num_classes]
@@ -119,7 +119,7 @@ class MetaNet(pl.LightningModule):
             self.accumulator += loss.item()
             
             did = support_batch['id']
-            if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
+            # if device != 'cpu': wandb.log({f"loss_{did}": loss.item()})
             
             return loss
         
@@ -137,7 +137,7 @@ class MetaNet(pl.LightningModule):
     
     def on_train_epoch_end(self):
         self.accumulator /= self.trainer.train_dataloader.num_batches
-        if device != 'cpu': wandb.log({"average_loss": self.accumulator, "lr":  self.optimizers().param_groups[0]['lr']})
+        # if device != 'cpu': wandb.log({"average_loss": self.accumulator, "lr":  self.optimizers().param_groups[0]['lr']})
         self.accumulator = 0
 
 

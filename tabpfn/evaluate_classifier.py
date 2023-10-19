@@ -25,7 +25,7 @@ def evaluate_classifier2(classifier, datasets, log=True,  train_data=0.7, log_na
     average_accuracy = sum(logs.values())/len(logs.values())
     average_accuracy_name = f'average_accuracy' if log_name == '' else f'{log_name}_average_accuracy'
     logs[average_accuracy_name] = average_accuracy
-    if log: wandb.log(logs)
+    # if log: wandb.log(logs)
     return average_accuracy
         
 def main():

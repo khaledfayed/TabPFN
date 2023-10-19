@@ -147,6 +147,7 @@ from evaluate_classifier import auto_ml_dids_train
 
 class TrainDataLoader(DataLoader):
     def __init__(self, datasets, *args, **kwargs):
+        super(TrainDataLoader, self).__init__(*args, **kwargs)
         self.datasets = datasets
         self.num_batches = 0
 

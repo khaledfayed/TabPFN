@@ -183,7 +183,7 @@ if __name__ == "__main__":
 
     train_loader = TrainDataLoader(datasets, num_workers=7)
     
-    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, use_distributed_sampler=False, reload_dataloaders_every_n_epochs=1, limit_train_batches=40)
+    trainer = pl.Trainer(max_epochs=1000, log_every_n_steps=1, use_distributed_sampler=False, reload_dataloaders_every_n_epochs=1, limit_train_batches=10)
     trainer.fit(metaNet, train_loader, train_loader)
 
 

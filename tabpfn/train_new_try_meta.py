@@ -73,7 +73,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     #training setup
-    best_accuracy_so_far = 0
+    best_accuracy_so_far = 2
     
     
     model = classifier.model[2]
@@ -157,16 +157,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         # if e > warmup_epochs:
                         #     scheduler.step()
                         #     if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
-                        with torch.no_grad():
-                            
-                            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
-                            
-                            if accuracy > best_accuracy_so_far:
-                                criterion.weight=torch.ones(10)
-                                best_accuracy_so_far = accuracy
-                                model_save_name = f'{wandb_name}_best_lr_{lr}'
-                                checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
-                                save_model(model, 'models_diff/', checkpoint, config)
 
                     except:
                         print("Invalid optimization step encountered")
@@ -186,13 +176,30 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         scheduler.step()
         if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
+        with torch.no_grad():
+            
+            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+
+                                                        
+        if accumulator < best_accuracy_so_far:
+            criterion.weight=torch.ones(10)
+            best_accuracy_so_far = accumulator
+            model_save_name = f'{wandb_name}_best_lr_{lr}'
+            checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
+            save_model(model, 'models_diff/', checkpoint, config)
+            
+        
+
+        
         if e % 1000 == 0:
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
-        
-            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
+
+            with torch.no_grad():
+                
+                accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
         wandb.log({"epoch": e})
         print('Epoch:', e, 'loss:', accumulator)
         

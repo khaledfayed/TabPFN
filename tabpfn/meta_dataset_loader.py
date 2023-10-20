@@ -233,7 +233,7 @@ def meta_dataset_loader3(datasets, batch_size=512, shuffle=True):
             if (dataset_length-i) > batch_size:
                 s_y = np.unique(targets[i:i+batch_size])
                 q_y = np.unique(targets[i+batch_size: i +2*batch_size])
-                if np.all(np.isin(s_y, q_y)) and len(s_y) > 1 and len(q_y) > 1:
+                if np.all(np.isin(s_y, q_y)):
                     support_meta_dataset.append({'x': data[i:i+batch_size], 'y': targets[i:i+batch_size],  'id' : dataset['id']})
                     query_meta_dataset.append({'x': data[i+batch_size: i +2*batch_size], 'y': targets[i+batch_size: i +2*batch_size], 'id' : dataset['id']})
                 else:

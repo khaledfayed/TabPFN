@@ -20,7 +20,7 @@ normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
 max_features = 100
-warmup_epochs=20
+warmup_epochs=0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def preprocess_input(eval_xs, eval_ys, eval_position):
         import warnings
@@ -62,7 +62,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     print(augmentation_config)
     
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_1.g.4_e_4000_lr_0.0001')
 
         
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)

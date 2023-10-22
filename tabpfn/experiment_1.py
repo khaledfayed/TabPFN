@@ -12,11 +12,13 @@ def experiment_1():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     tabpfn = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
-    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_1.g.3_18000_fine_e_1100_lr_9e-05')
+    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_1.g.4_1_e_2000_lr_9.62249304461532e-05')
     
     datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
     
     rng = np.random.default_rng(seed=42)
+    
+    meta_net_accuracy = []
 
     for dataset in datasets:
             
@@ -42,8 +44,12 @@ def experiment_1():
         y_eval, p_eval = mettab.predict(dataset['data'][512:], return_winning_probability=True)
         accuracy = accuracy_score(dataset['target'][512:], y_eval)
         print('metanet accuracy', accuracy) 
+        meta_net_accuracy.append((accuracy))
         
         print('='*20, '\n')
+        
+    formatted_data = '\t'.join(map(str, meta_net_accuracy))
+    print(formatted_data)
 
         
 

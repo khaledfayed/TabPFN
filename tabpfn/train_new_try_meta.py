@@ -62,7 +62,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     print(augmentation_config)
     
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_1.drop_e_2000_lr_0.0001')
 
         
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
@@ -217,8 +217,8 @@ if __name__ == "__main__":
     # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
-    # config = []
-    config = [('relabel', 2)]
+    config = []
+    # config = [('relabel', 2)]
     
 
     

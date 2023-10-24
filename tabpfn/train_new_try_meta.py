@@ -73,7 +73,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     #training setup
-    best_accuracy_so_far = 2
+    best_accuracy_so_far = 0
     
     
     model = classifier.model[2]
@@ -181,9 +181,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
 
                                                         
-        if accumulator < best_accuracy_so_far:
+        if accuracy > best_accuracy_so_far:
             criterion.weight=torch.ones(10)
-            best_accuracy_so_far = accumulator
+            best_accuracy_so_far = accuracy
             model_save_name = f'{wandb_name}_best_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)

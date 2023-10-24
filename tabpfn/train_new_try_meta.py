@@ -215,9 +215,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
-    # config = [('shuffle_features', 1)]
+    config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
-    config = []
+    # config = []
     
 
     

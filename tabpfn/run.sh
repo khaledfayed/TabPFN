@@ -18,7 +18,6 @@
 #SBATCH --ntasks-per-core=1
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
-#SBATCH --time=14-00:00:00
 
 # Define the amount of memory required per node
 #SBATCH --mem 8GB

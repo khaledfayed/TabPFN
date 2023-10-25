@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the partition on which the job shall run.
-#SBATCH --partition aisdlc_gpu-rtx2080    # short: -p <partition_name>
+#SBATCH --partition ml_gpu-rtx2080    # short: -p <partition_name>
 
 # Define a name for your job
 #SBATCH --job-name metanet             # short: -J <job name>
@@ -18,6 +18,7 @@
 #SBATCH --ntasks-per-core=1
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
+#SBATCH --time=14-00:00:00
 
 # Define the amount of memory required per node
 #SBATCH --mem 8GB
@@ -38,7 +39,7 @@ conda activate thesis
 # Running the job
 start=`date +%s`
 
-python train_new_try_meta.py --epochs 4001 --lr 0.0001 --weight_decay 0.0001 --name "1.drop"
+python train_new_try_meta.py --epochs 25001 --lr 0.0001 --weight_decay 0.0001 --name "relabel+random_1"
 
 end=`date +%s`
 runtime=$((end-start))

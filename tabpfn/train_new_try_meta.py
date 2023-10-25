@@ -20,7 +20,7 @@ normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
 max_features = 100
-warmup_epochs=20
+warmup_epochs=0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def preprocess_input(eval_xs, eval_ys, eval_position):
         import warnings
@@ -62,7 +62,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     print(augmentation_config)
     
-    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    classifier = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_relabel+random_e_7000_lr_0.0001')
 
         
     datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
@@ -107,7 +107,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator = 0
         cloned_datasets = copy.deepcopy(datasets)
         augment_datasets(cloned_datasets, augmentation_config)
-        # generate_datasets_gaussian(cloned_datasets)
+        generate_datasets_gaussian(cloned_datasets)
         support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         
         for i in range(len(support_dataset)):
@@ -214,9 +214,9 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
+    config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
-    config = [('drop_features', 1)]
+    # config = [('drop_features', 1)]
     # config = []
     # config = [('relabel', 2)]
     

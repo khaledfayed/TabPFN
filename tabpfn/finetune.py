@@ -66,7 +66,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
         
     # datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    datasets = load_OHE_dataset([23],one_hot_encode=False)
+    datasets = load_OHE_dataset([1528],one_hot_encode=False)
     
     dataset = datasets[0]
     rng = np.random.default_rng(seed=42)
@@ -188,14 +188,6 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             with torch.no_grad():
                 
                 accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
-
-                                                        
-        # if accuracy > best_accuracy_so_far:
-        #     criterion.weight=torch.ones(10)
-        #     best_accuracy_so_far = accuracy
-        #     model_save_name = f'{wandb_name}_best_lr_{lr}'
-        #     checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
-        #     save_model(model, 'models_diff/', checkpoint, config)
             
         
 
@@ -206,9 +198,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
 
-            # with torch.no_grad():
                 
-            #     accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
         wandb.log({"epoch": e})
         print('Epoch:', e, 'loss:', accumulator)
         

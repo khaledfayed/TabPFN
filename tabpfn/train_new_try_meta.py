@@ -106,7 +106,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         accumulator = 0
         cloned_datasets = copy.deepcopy(datasets)
-        # augment_datasets(cloned_datasets, augmentation_config)
+        augment_datasets(cloned_datasets, augmentation_config)
         generate_datasets_gaussian(cloned_datasets)
         support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         

@@ -20,7 +20,7 @@ normalize_with_test= False
 normalize_with_sqrt= False
 normalize_to_ranking = False
 max_features = 100
-warmup_epochs=0
+warmup_epochs=20
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def preprocess_input(eval_xs, eval_ys, eval_position):
         import warnings
@@ -191,7 +191,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
 
         
-        if e % 1 == 0:
+        if e == 0 or e == 250 or e == 500 or e == 1000:
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'

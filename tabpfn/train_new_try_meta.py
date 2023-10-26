@@ -107,7 +107,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator = 0
         cloned_datasets = copy.deepcopy(datasets)
         augment_datasets(cloned_datasets, augmentation_config)
-        generate_datasets_gaussian(cloned_datasets)
+        # generate_datasets_gaussian(cloned_datasets)
         support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         
         for i in range(len(support_dataset)):
@@ -214,11 +214,11 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
+    config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
     # config = []
-    config = [('relabel', 2)]
+    # config = [('relabel', 2)]
     
 
     

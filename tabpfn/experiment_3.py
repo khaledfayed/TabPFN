@@ -7,14 +7,13 @@ import torch
 import wandb
 import numpy as np
 
-def experiment_1():
+def experiment_3():
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    # tabpfn = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
-    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_finetunefinal_e_0_lr_1e-05')
+    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_finetune_one_e_100_lr_1e-05')
     
-    datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
+    datasets = load_OHE_dataset([23] ,one_hot_encode=False)
     
     rng = np.random.default_rng(seed=42)
     
@@ -41,8 +40,8 @@ def experiment_1():
         # print('tabPFN accuracy', accuracy) 
         
         mettab.fit(fit_data, fit_target)
-        y_eval, p_eval = mettab.predict(dataset['data'][512:], return_winning_probability=True)
-        accuracy = accuracy_score(dataset['target'][512:], y_eval)
+        y_eval, p_eval = mettab.predict(dataset['data'][512:1024], return_winning_probability=True)
+        accuracy = accuracy_score(dataset['target'][512:1024], y_eval)
         print('metanet accuracy', accuracy) 
         meta_net_accuracy.append((accuracy))
         
@@ -54,4 +53,4 @@ def experiment_1():
         
 
 if __name__ == "__main__":
-    experiment_1()
+    experiment_3()

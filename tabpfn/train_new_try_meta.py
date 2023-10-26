@@ -217,8 +217,8 @@ if __name__ == "__main__":
     # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
-    config = []
-    # config = [('relabel', 2)]
+    # config = []
+    config = [('relabel', 2)]
     
 
     

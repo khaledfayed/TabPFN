@@ -11,7 +11,7 @@ def experiment_3():
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_test_e_900_lr_1e-05')
     
     datasets = load_OHE_dataset([1528] ,one_hot_encode=False)
     

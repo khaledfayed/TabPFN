@@ -101,8 +101,8 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     #     model = torch.nn.DataParallel(model)
         
     print('Start training')
-    with torch.no_grad():
-        evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+    # with torch.no_grad():
+    #     evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
     
     model.train()
     
@@ -183,17 +183,19 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         scheduler.step()
         if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
-        with torch.no_grad():
-            
-            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+        if e % 1000 == 0:
+        
+            with torch.no_grad():
+                
+                accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
 
                                                         
-        if accuracy > best_accuracy_so_far:
-            criterion.weight=torch.ones(10)
-            best_accuracy_so_far = accuracy
-            model_save_name = f'{wandb_name}_best_lr_{lr}'
-            checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
-            save_model(model, 'models_diff/', checkpoint, config)
+        # if accuracy > best_accuracy_so_far:
+        #     criterion.weight=torch.ones(10)
+        #     best_accuracy_so_far = accuracy
+        #     model_save_name = f'{wandb_name}_best_lr_{lr}'
+        #     checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
+        #     save_model(model, 'models_diff/', checkpoint, config)
             
         
 
@@ -204,9 +206,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
 
-            with torch.no_grad():
+            # with torch.no_grad():
                 
-                accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
+            #     accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu', log_name='save')
         wandb.log({"epoch": e})
         print('Epoch:', e, 'loss:', accumulator)
         

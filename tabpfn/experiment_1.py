@@ -11,8 +11,8 @@ def experiment_1():
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    tabpfn = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
-    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_testcombo_e_500_lr_1e-05')
+    # tabpfn = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False)
+    mettab = TabPFNClassifier(device=device, N_ensemble_configurations=1, only_inference=False, model_string='_relabel+random_1_e_9000_lr_0.0001')
     
     datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
     
@@ -35,10 +35,10 @@ def experiment_1():
         
         fit_data = dataset['data'][:512]
         fit_target = dataset['target'][:512]
-        tabpfn.fit(fit_data, fit_target)
-        y_eval, p_eval = tabpfn.predict(dataset['data'][512:], return_winning_probability=True)
-        accuracy = accuracy_score(dataset['target'][512:], y_eval)
-        print('tabPFN accuracy', accuracy) 
+        # tabpfn.fit(fit_data, fit_target)
+        # y_eval, p_eval = tabpfn.predict(dataset['data'][512:], return_winning_probability=True)
+        # accuracy = accuracy_score(dataset['target'][512:], y_eval)
+        # print('tabPFN accuracy', accuracy) 
         
         mettab.fit(fit_data, fit_target)
         y_eval, p_eval = mettab.predict(dataset['data'][512:], return_winning_probability=True)

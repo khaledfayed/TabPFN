@@ -107,7 +107,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         accumulator = 0
         cloned_datasets = copy.deepcopy(datasets)
         augment_datasets(cloned_datasets, augmentation_config)
-        # generate_datasets_gaussian(cloned_datasets)
+        generate_datasets_gaussian(cloned_datasets)
         support_dataset, query_dataset = meta_dataset_loader3(cloned_datasets)
         
         for i in range(len(support_dataset)):
@@ -191,7 +191,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
 
         
-        if e == 0 or e == 250 or e == 500 or e == 1000:
+        if e%1000 == 0 :
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'

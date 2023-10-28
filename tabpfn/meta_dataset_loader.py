@@ -207,7 +207,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         transformed_data = pipeline.fit_transform(df, y)
         transformed_targets = label_encoder.fit_transform(y)
                     
-        encoded_datasets.append({'data': X, 'target': y, 'id': dataset.id, 'num_categorical_features': num_categorical_features})
+        encoded_datasets.append({'data': transformed_data, 'target': transformed_targets, 'id': dataset.id, 'num_categorical_features': num_categorical_features})
     
     return encoded_datasets
 

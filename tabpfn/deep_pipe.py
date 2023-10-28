@@ -13,7 +13,7 @@ print(openml.config.get_cache_directory())
 
 # Load a specific dataset by its ID
 
-datasets = load_OHE_dataset([31],one_hot_encode=False)
+datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
     
 rng = np.random.default_rng(seed=42)
 

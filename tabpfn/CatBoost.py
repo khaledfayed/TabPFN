@@ -19,7 +19,7 @@ categorical_features_indices = X_train.select_dtypes(['category']).columns.tolis
 
 
 # Define the CatBoost classifier
-clf = CatBoostClassifier(task_type='cpu' , verbose=0, cat_features=categorical_features_indices)
+clf = CatBoostClassifier(task_type='CPU' , verbose=0, cat_features=categorical_features_indices)
 
 # Define the parameter grid for cross-validation
 param_grid = {

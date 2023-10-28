@@ -61,4 +61,8 @@ for dataset in datasets:
     best_model = grid_search.best_estimator_
     test_score = best_model.score(dataset['data'][train_test_split:], dataset['target'][train_test_split:])
     print("Test accuracy: {:.2f}".format(test_score))
+    results.append(test_score)
+    
+formatted_data = '	'.join(map(str, results))
+print(formatted_data)
     

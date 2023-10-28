@@ -1,9 +1,11 @@
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
-
+import os
 import openml
 from sklearn.model_selection import train_test_split
 
+openml.config.set_cache_directory(os.path.abspath('openml'))
+print(openml.config.get_cache_directory())
 
 
 dataset = openml.datasets.get_dataset(31)  # Replace 31 with the desired dataset ID

@@ -33,7 +33,7 @@ for dataset in datasets:
     param_grid = {
         'n_estimators': [50, 100, 150],
         'max_depth': [3, 5, 7],
-        'learning_rate': [0.01, 0.05, 0.1],
+        'learning_rate': [0.01, 0.05, 0.1, 0.001],
         # Add other parameters as needed
     }
     # Set up GridSearchCV

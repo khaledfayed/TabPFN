@@ -3,36 +3,43 @@ from sklearn.model_selection import GridSearchCV
 import os
 import openml
 from sklearn.model_selection import train_test_split
+import numpy as np
+from meta_dataset_loader import load_OHE_dataset
+from evaluate_classifier import auto_ml_dids_test
 
 openml.config.set_cache_directory(os.path.abspath('openml'))
 print(openml.config.get_cache_directory())
 
 
-dataset = openml.datasets.get_dataset(31)  # Replace 31 with the desired dataset ID
-X, y, _, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
+datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
+    
+rng = np.random.default_rng(seed=42)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-
-
-# Define the XGBoost classifier
-clf = xgb.XGBClassifier(tree_method='gpu_hist')
-
-# Define the parameter grid for cross-validation
-param_grid = {
-    'n_estimators': [50, 100, 150],
-    'max_depth': [3, 5, 7],
-    'learning_rate': [0.01, 0.05, 0.1],
-    # Add other parameters as needed
-}
-
-# Set up GridSearchCV
-grid_search = GridSearchCV(clf, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
-
-# Fit the model
-grid_search.fit(X_train, y_train)
-
-# Evaluate the best model on the test data
-best_model = grid_search.best_estimator_
-test_score = best_model.score(X_test, y_test)
-print("Test accuracy: {:.2f}".format(test_score))
+for dataset in datasets:
+            
+    dataset_length = len(dataset['data'])
+    
+    dataset_indices = np.arange(dataset_length)
+    rng.shuffle(dataset_indices)
+    
+    dataset['data'] = dataset['data'][dataset_indices]
+    dataset['target'] = dataset['target'][dataset_indices]
+    
+    fit_data = dataset['data'][:512]
+    fit_target = dataset['target'][:512]
+    clf = xgb.XGBClassifier(tree_method='gpu_hist')
+    # Define the parameter grid for cross-validation
+    param_grid = {
+        'n_estimators': [50, 100, 150],
+        'max_depth': [3, 5, 7],
+        'learning_rate': [0.01, 0.05, 0.1],
+        # Add other parameters as needed
+    }
+    # Set up GridSearchCV
+    grid_search = GridSearchCV(clf, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+    # Fit the model
+    grid_search.fit(fit_data, fit_target)
+    # Evaluate the best model on the test data
+    best_model = grid_search.best_estimator_
+    test_score = best_model.score(dataset['data'][512:], dataset['target'][512:])
+    print("Test accuracy: {:.2f}".format(test_score))

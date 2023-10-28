@@ -10,9 +10,11 @@ openml.config.set_cache_directory(os.path.abspath('openml'))
 print(openml.config.get_cache_directory())
 
 
-datasets = load_OHE_dataset([31],one_hot_encode=False)
+datasets = load_OHE_dataset(auto_ml_dids_test,one_hot_encode=False)
     
 rng = np.random.default_rng(seed=42)
+
+results = []
 
 for dataset in datasets:
             
@@ -43,4 +45,7 @@ for dataset in datasets:
     # Evaluate the best model on the test data
     best_model = grid_search.best_estimator_
     test_score = best_model.score(dataset['data'][train_test_split:], dataset['target'][train_test_split:])
-    print("Test accuracy: {:.2f}".format(test_score))
+    results.append(test_score)
+    
+formatted_data = '	'.join(map(str, results))
+print(formatted_data)

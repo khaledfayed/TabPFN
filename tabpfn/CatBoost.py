@@ -30,6 +30,9 @@ for dataset in datasets:
     dataset_indices = np.arange(dataset_length)
     rng.shuffle(dataset_indices)
     
+    categorical_features_indices = dataset['data'].select_dtypes(['category']).columns.tolist()
+
+    
     dataset['data'] = dataset['data'].to_numpy()
     dataset['target'] = dataset['target'].to_numpy()
     
@@ -40,7 +43,6 @@ for dataset in datasets:
     fit_data = dataset['data'][:train_test_split]
     fit_target = dataset['target'][:train_test_split]
 
-    categorical_features_indices = fit_data.select_dtypes(['category']).columns.tolist()
 
 
     # Define the CatBoost classifier

@@ -36,10 +36,10 @@ for dataset in datasets:
     # fit_data = dataset['data'][:train_test_split]
     # fit_target = dataset['target'][:train_test_split]
     
-    X_train = dataset['data'].iloc[:train_test_split]
-    y_train = dataset['target'][:train_test_split]
-    X_test = dataset['data'].iloc[:train_test_split]
-    y_test = dataset['target'][:train_test_split]
+    X_train = dataset['data'].iloc[dataset_indices[:train_test_split]]
+    y_train = dataset['target'].iloc[dataset_indices[:train_test_split]]
+    X_test = dataset['data'].iloc[dataset_indices[train_test_split:]]
+    y_test = dataset['target'].iloc[dataset_indices[train_test_split:]]
 
     deep_pipe = DeepPipe(n_iters = 50,  #bo iterations
                         time_limit = 3600, #in seconds

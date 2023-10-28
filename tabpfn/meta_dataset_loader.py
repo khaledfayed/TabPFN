@@ -198,7 +198,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         categorical_columns = [col for col, is_categorical in zip(attribute_names, categorical_features) if is_categorical]
         
         preprocessor = ColumnTransformer(
-            transformers=[('cat', encoder, [])],
+            transformers=[('cat', encoder, categorical_columns)],
             remainder='passthrough'
         )
         
@@ -207,7 +207,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
         transformed_data = pipeline.fit_transform(df, y)
         transformed_targets = label_encoder.fit_transform(y)
                     
-        encoded_datasets.append({'data': transformed_data, 'target': y, 'id': dataset.id, 'num_categorical_features': num_categorical_features})
+        encoded_datasets.append({'data': X, 'target': y, 'id': dataset.id, 'num_categorical_features': num_categorical_features})
     
     return encoded_datasets
 

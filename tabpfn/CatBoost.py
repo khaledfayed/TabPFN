@@ -5,6 +5,7 @@ import numpy as np
 import openml
 from evaluate_classifier import auto_ml_dids_test
 from meta_dataset_loader import load_OHE_dataset
+import pandas as pd
 
 
 openml.config.set_cache_directory(os.path.abspath('openml'))
@@ -28,6 +29,10 @@ for dataset in datasets:
     
     dataset_indices = np.arange(dataset_length)
     rng.shuffle(dataset_indices)
+    
+    dataset['data'] = dataset['data'].to_numpy()
+    dataset['target'] = dataset['target'].to_numpy()
+    '
     
     dataset['data'] = dataset['data'][dataset_indices]
     dataset['target'] = dataset['target'][dataset_indices]

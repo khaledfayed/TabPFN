@@ -18,7 +18,7 @@ for dataset in datasets:
             
     dataset_length = len(dataset['data'])
     
-    train_test_split = int(dataset_length * 0.8)
+    train_test_split = 512
     
     dataset_indices = np.arange(dataset_length)
     rng.shuffle(dataset_indices)

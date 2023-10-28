@@ -15,8 +15,11 @@ X, y, _, attribute_names = dataset.get_data(target=dataset.default_target_attrib
 # Split the data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+categorical_features_indices = X_train.select_dtypes(['category']).columns.tolist()
+
+
 # Define the CatBoost classifier
-clf = CatBoostClassifier(task_type='GPU' , verbose=0)
+clf = CatBoostClassifier(task_type='GPU' , verbose=0, cat_features=categorical_features_indices)
 
 # Define the parameter grid for cross-validation
 param_grid = {

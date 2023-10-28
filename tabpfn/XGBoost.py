@@ -25,8 +25,8 @@ for dataset in datasets:
     dataset['data'] = dataset['data'][dataset_indices]
     dataset['target'] = dataset['target'][dataset_indices]
     
-    fit_data = dataset['data'][:512]
-    fit_target = dataset['target'][:512]
+    fit_data = dataset['data'][:1000]
+    fit_target = dataset['target'][:1000]
     clf = xgb.XGBClassifier(tree_method='gpu_hist')
     # Define the parameter grid for cross-validation
     param_grid = {
@@ -41,5 +41,5 @@ for dataset in datasets:
     grid_search.fit(fit_data, fit_target)
     # Evaluate the best model on the test data
     best_model = grid_search.best_estimator_
-    test_score = best_model.score(dataset['data'][512:], dataset['target'][512:])
+    test_score = best_model.score(dataset['data'][1000:], dataset['target'][1000:])
     print("Test accuracy: {:.2f}".format(test_score))

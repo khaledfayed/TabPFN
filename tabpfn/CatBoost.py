@@ -3,6 +3,9 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 
 import openml
 
+openml.config.set_cache_directory(os.path.abspath('openml'))
+print(openml.config.get_cache_directory())
+
 # Load a specific dataset by its ID
 dataset = openml.datasets.get_dataset(31)  # Replace 31 with the desired dataset ID
 X, y, _, attribute_names = dataset.get_data(target=dataset.default_target_attribute)

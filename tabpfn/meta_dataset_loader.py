@@ -187,7 +187,7 @@ def load_OHE_dataset(dids, one_hot_encode=True):
     
     for dataset in datasets:
         X, y, categorical_features, attribute_names = dataset.get_data(
-            target=dataset.default_target_attribute,
+            target=dataset.default_target_attribute, dataset_format='array'
         )
                 
         num_categorical_features = np.sum(categorical_features)

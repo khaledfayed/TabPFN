@@ -32,7 +32,7 @@ for dataset in datasets:
     
     dataset['data'] = dataset['data'].to_numpy()
     dataset['target'] = dataset['target'].to_numpy()
-    '
+    
     
     dataset['data'] = dataset['data'][dataset_indices]
     dataset['target'] = dataset['target'][dataset_indices]

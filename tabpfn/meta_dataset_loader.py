@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder, TargetEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
 import openml
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -178,7 +178,6 @@ augmentation_dict = {
 
 def load_OHE_dataset(dids, one_hot_encode=True):
     encoder = OneHotEncoder() if one_hot_encode else OrdinalEncoder()
-    target_encoder = TargetEncoder(target_type='binary')
     label_encoder = LabelEncoder()
 
     datasets = openml.datasets.get_datasets(dids)

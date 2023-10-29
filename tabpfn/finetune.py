@@ -196,7 +196,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
 
         
-        if e % 100 == 0:
+        if e % 500 == 0:
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
@@ -214,7 +214,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             classifier.fit(fit_test_data, fit_test_target)
             y_eval, p_eval = classifier.predict(test_dataset['data'][512:], return_winning_probability=True)
             accuracy = accuracy_score(test_dataset['target'][512:], y_eval)
-            print(accuracy)
+            # print(accuracy)
+            
+            wandb.log({"test_acc": accuracy})
             
         
 
@@ -227,7 +229,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
-    config = [('shuffle_features', 1)]
+    # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
     # config = []
     # config = [('relabel', 2)]

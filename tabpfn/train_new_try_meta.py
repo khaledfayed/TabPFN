@@ -126,7 +126,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                     param.requires_grad = False
 
 # Unfreeze the layers you want to train
-                for name, param in list(model.named_parameters())[-32:]:
+                for name, param in list(model.named_parameters())[-64:]:
                     param.requires_grad = True
                 
                 criterion.weight=torch.ones(num_classes)

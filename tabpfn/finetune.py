@@ -81,6 +81,13 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     
     
     test_datasets = load_OHE_dataset([715], one_hot_encode=False)
+    test_dataset = test_datasets[0]
+    test_dataset_length = len(test_dataset['data'])
+    test_dataset_indices = np.arange(test_dataset_length)
+    rng.shuffle(test_dataset_indices)
+    test_dataset['data'] = test_dataset['data'][test_dataset_indices]
+    test_dataset['target'] = test_dataset['target'][test_dataset_indices]
+    
     
     
     #training setup
@@ -202,7 +209,11 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         with torch.no_grad():
                 
-            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
+            fit_test_data = test_dataset['data'][:512]
+            fit_test_target = test_dataset['target'][:512]
+            classifier.fit(fit_test_data, fit_test_target)
+            y_eval, p_eval = classifier.predict(test_dataset['data'][512:], return_winning_probability=True)
+            accuracy = accuracy_score(test_dataset['target'][512:], y_eval)
             print(accuracy)
             
         

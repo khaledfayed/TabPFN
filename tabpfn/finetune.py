@@ -80,7 +80,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
     dataset['target'] = dataset['target'][:512]
     
     
-    test_datasets = load_OHE_dataset(auto_ml_dids_val, one_hot_encode=False)
+    test_datasets = load_OHE_dataset([715], one_hot_encode=False)
     
     
     #training setup
@@ -202,8 +202,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
         with torch.no_grad():
                 
-            accuracy = evaluate_classifier2(classifier, [715], log= device != 'cpu')
-            print('Accuracy:', accuracy)
+            accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
             
         
 

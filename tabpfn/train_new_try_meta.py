@@ -122,12 +122,12 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         [X_full,
                         torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
                 
-                for _, param in model.named_parameters():
-                    param.requires_grad = False
+#                 for _, param in model.named_parameters():
+#                     param.requires_grad = False
 
-# Unfreeze the layers you want to train
-                for name, param in list(model.named_parameters())[-32:]:
-                    param.requires_grad = True
+# # Unfreeze the layers you want to train
+#                 for name, param in list(model.named_parameters())[-32:]:
+#                     param.requires_grad = True
                 
                 criterion.weight=torch.ones(num_classes)
                 

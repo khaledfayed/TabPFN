@@ -66,7 +66,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
 
         
     # datasets = load_OHE_dataset(auto_ml_dids_train, one_hot_encode=False)
-    datasets = load_OHE_dataset([1528],one_hot_encode=False)
+    datasets = load_OHE_dataset([715],one_hot_encode=False)
     
     dataset = datasets[0]
     rng = np.random.default_rng(seed=42)
@@ -213,8 +213,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
-    config = [('shuffle_features', 1)]
+    config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
+    # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
     # config = []
     # config = [('relabel', 2)]

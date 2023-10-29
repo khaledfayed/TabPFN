@@ -183,12 +183,9 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         scheduler.step()
         if device != 'cpu': wandb.log({"lr":  optimizer.param_groups[0]['lr']})
         
-        if e % 1000 == 0:
+        # if e % 1000 == 0:
         
-            with torch.no_grad():
-                
-                accuracy = evaluate_classifier2(classifier, test_datasets, log= device != 'cpu')
-            
+
         
 
         
@@ -198,18 +195,16 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
             
-        fit_data = dataset['data'][:512]
-        fit_target = dataset['target'][:512]
-        classifier.fit(fit_data, fit_target)
-        y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
-        accuracy = accuracy_score(dataset['target'][512:], y_eval)
-        print(accuracy)
 
                 
         wandb.log({"epoch": e})
         print('Epoch:', e, 'loss:', accumulator)
         
-    
+        with torch.no_grad():
+                
+            accuracy = evaluate_classifier2(classifier, [715], log= device != 'cpu')
+            print('Accuracy:', accuracy)
+            
         
 
 if __name__ == "__main__":

@@ -64,7 +64,7 @@ def generate_datasets_gaussian(datasets, device='cpu'):
         
         delattr(model, 'fc1')
         model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
-        nn.init.normal_(model.fc1.weight, mean=0.0, std=0.5)
+        nn.init.normal_(model.fc1.weight, mean=0.0, std=1)
         model.fc1.to(device)
         
         X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)

@@ -38,7 +38,7 @@ conda activate thesis
 # Running the job
 start=`date +%s`
 
-python finetune.py --epochs 1001 --lr 0.00001 --weight_decay 0.0001 --name "ft_1_shuffle+relabel"
+python finetune.py --epochs 1001 --lr 0.0001 --weight_decay 0.0001 --name "ft_1_shuffle+relabel"
 
 end=`date +%s`
 runtime=$((end-start))

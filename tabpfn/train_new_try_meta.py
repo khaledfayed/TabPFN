@@ -122,12 +122,12 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
                         [X_full,
                         torch.zeros((X_full.shape[0], X_full.shape[1], max_features - X_full.shape[2])).to(device)], -1)
                 
-#                 for _, param in model.named_parameters():
-#                     param.requires_grad = False
+                for _, param in model.named_parameters():
+                    param.requires_grad = False
 
-# # Unfreeze the layers you want to train
-#                 for name, param in list(model.named_parameters())[-32:]:
-#                     param.requires_grad = True
+# Unfreeze the layers you want to train
+                for name, param in list(model.named_parameters())[-32:]:
+                    param.requires_grad = True
                 
                 criterion.weight=torch.ones(num_classes)
                 
@@ -192,7 +192,7 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
         
 
         
-        if e%1000 == 0 :
+        if e%250 == 0 :
             criterion.weight=torch.ones(10)
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
@@ -215,11 +215,11 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="The first argument (an integer)")
     args = parser.parse_args()
     
-    # config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
+    config = [('relabel', 2), ('drop_features', 1),('shuffle_features', 1)]
     # config = [('shuffle_features', 1)]
     # config = [('drop_features', 1)]
     # config = []
-    config = [('relabel', 2)]
+    # config = [('relabel', 2)]
     
 
     

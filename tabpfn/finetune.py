@@ -197,6 +197,13 @@ def train(lr=0.0001, wandb_name='', num_augmented_datasets=0, epochs = 100, weig
             model_save_name = f'{wandb_name}_e_{e}_lr_{lr}'
             checkpoint = f'prior_diff_real_checkpoint_{model_save_name}_n_0_epoch_100.cpkt'
             save_model(model, 'models_diff/', checkpoint, config)
+            
+        fit_data = dataset['data'][:512]
+        fit_target = dataset['target'][:512]
+        classifier.fit(fit_data, fit_target)
+        y_eval, p_eval = classifier.predict(dataset['data'][512:], return_winning_probability=True)
+        accuracy = accuracy_score(dataset['target'][512:], y_eval)
+        print(accuracy)
 
                 
         wandb.log({"epoch": e})

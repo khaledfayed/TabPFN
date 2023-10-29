@@ -29,18 +29,21 @@ class OneLayerModel(nn.Module):
                 
         return x
     
-# class TwoLayerModel(nn.Module):
-#     def __init__(self, input_size, hidden_size):
-#         super(MyModel, self).__init__()
-#         self.fc1 = nn.Linear(input_size, hidden_size)  # Example linear layer with bias
-#         nn.init.normal_(self.fc1.weight, mean=0.0, std=0.01)  # Normal initialization with mean=0.0 and std=0.01
-#         self.sig = nn.Sigmoid()
+class TwoLayerModel(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(TwoLayerModel, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)  # Example linear layer with bias
+        nn.init.normal_(self.fc1.weight, mean=0.0, std=0.01)  # Normal initialization with mean=0.0 and std=0.01
+        self.sig = nn.Sigmoid()
+        self.fc2 = nn.Linear(hidden_size, output_size)  # Example linear layer with bias
+        nn.init.normal_(self.fc2.weight, mean=0.0, std=1)  # Normal initialization with mean=0.0 and std=0.01
 
-#     def forward(self, x):
-#         x = self.fc1(x)
-#         # x = self.sig(x)
-#         # x = self.fc2(x)
-#         return x
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.sig(x)
+        x = self.fc2(x)
+        return x
     
 # class ThreeLayerModel(nn.Module):
 #     def __init__(self, input_size, hidden_size):
@@ -58,14 +61,39 @@ class OneLayerModel(nn.Module):
 def generate_datasets_gaussian(datasets, device='cpu'):
     
     # model = MyModel(1, 1).to(device)
-    model = OneLayerModel(1, 1, 1).to(device)
+    # model = OneLayerModel(1, 1, 1).to(device)
+    
+    # for i,dataset in enumerate(datasets):
+        
+    #     delattr(model, 'fc1')
+    #     model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
+    #     nn.init.normal_(model.fc1.weight, mean=0.0, std=1)
+    #     model.fc1.to(device)
+        
+    #     X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)
+        
+    #     output = model(X)
+        
+    #     datasets[i]['data'] = output.detach().cpu().numpy()
+        
+    #     model = OneLayerModel(1, 1, 1).to(device)
+    
+    model = TwoLayerModel(1, 1, 1).to(device)
+
     
     for i,dataset in enumerate(datasets):
         
+        first_layer_size = np.random.randint(4, 1000)
+        second_layer_size = np.random.randint(4, 101)
+        
         delattr(model, 'fc1')
-        model.add_module('fc1', nn.Linear(dataset['data'].shape[1], np.random.randint(4, 101)))
+        model.add_module('fc1', nn.Linear(dataset['data'].shape[1], first_layer_size))
         nn.init.normal_(model.fc1.weight, mean=0.0, std=1)
         model.fc1.to(device)
+        delattr(model, 'fc2')
+        model.add_module('fc2', nn.Linear(first_layer_size, second_layer_size))
+        nn.init.normal_(model.fc1.weight, mean=0.0, std=1)
+        model.fc2.to(device)
         
         X = torch.tensor(dataset['data'], dtype=torch.float32).to(device)
         
